@@ -171,15 +171,7 @@ body { transition: background 1.5s ease; }
 
 .sunset-alert {
   border: none !important;
-  background:
-    linear-gradient(180deg,
-      rgba(255, 245, 210, 0.48) 0%,
-      rgba(245, 185, 120, 0.44) 25%,
-      rgba(230, 130, 110, 0.42) 50%,
-      rgba(190, 100, 160, 0.40) 75%,
-      rgba(130, 80, 170, 0.36) 100%
-    ) !important;
-  background-attachment: fixed !important;
+  background: linear-gradient(135deg, rgba(210, 130, 90, 0.38) 0%, rgba(225, 160, 100, 0.32) 50%, rgba(200, 120, 110, 0.36) 100%) !important;
 }
 .sunset-alert .block-label { color: var(--amber); }
 .sunset-countdown { font-size: 1.5rem; font-weight: 300; color: var(--amber); letter-spacing: 0.04em; margin-top: 0.3rem; }
