@@ -257,18 +257,27 @@ function checkSunsetAlert() {
   const diffSec = sunsetSeconds - nowSec;
   const diffMin = diffSec / 60;
 
-  // Show 2 hours before sunset, hide 10 min after
+  const goldenSec = sunsetSeconds - 40 * 60; // golden hour starts 40 min before sunset
+  const diffToGolden = goldenSec - nowSec;
+
+  // Show 2 hours before sunset, hide 10 min after sunset
   if (diffMin <= 120 && diffMin >= -10) {
     block.style.display = '';
     const cd = document.getElementById('sunset-countdown');
     const sub = document.getElementById('sunset-sub');
-    if (diffSec > 0) {
-      const h = Math.floor(diffSec / 3600), m = Math.floor((diffSec % 3600) / 60), s = diffSec % 60;
-      if (cd) cd.textContent = 'sunset in ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-      if (sub) sub.textContent = diffMin > 40 ? 'golden hour begins in ~' + Math.round(diffMin - 40) + ' min' : 'golden hour · go outside now';
-    } else {
+    if (diffSec <= 0) {
       if (cd) cd.textContent = 'sun has set';
       if (sub) sub.textContent = 'blue hour in progress';
+    } else if (diffToGolden > 0) {
+      // Counting down to golden hour start
+      const h = Math.floor(diffToGolden / 3600), m = Math.floor((diffToGolden % 3600) / 60), s = diffToGolden % 60;
+      if (cd) cd.textContent = 'golden hour in ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      if (sub) sub.textContent = 'sunset at ' + String(Math.floor(sunsetSeconds / 3600)).padStart(2, '0') + ':' + String(Math.floor((sunsetSeconds % 3600) / 60)).padStart(2, '0');
+    } else {
+      // Inside golden hour
+      if (cd) cd.textContent = 'golden hour · go outside now';
+      const remH = Math.floor(diffSec / 3600), remM = Math.floor((diffSec % 3600) / 60), remS = diffSec % 60;
+      if (sub) sub.textContent = 'sunset in ' + String(remH).padStart(2, '0') + ':' + String(remM).padStart(2, '0') + ':' + String(remS).padStart(2, '0');
     }
   } else {
     block.style.display = 'none';
