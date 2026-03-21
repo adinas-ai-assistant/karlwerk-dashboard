@@ -149,31 +149,29 @@ async function loadNews() {
 async function loadTldr() {
   const list = document.getElementById('tldr-list');
   try {
-    const data = await fetch(
-      'https://api.rss2json.com/v1/api.json?rss_url=https://tldr.tech/api/rss/tech'
-    ).then(r => r.json());
+    const xml = await fetch('https://tldr.tech/api/rss/tech').then(r => r.text());
+    const doc = new DOMParser().parseFromString(xml, 'text/xml');
+    const item = doc.querySelector('item');
+    if (!item) throw new Error('No item');
 
-    if (!data.items || !data.items.length) throw new Error('No items');
+    const title = item.querySelector('title').textContent;
+    const link = item.querySelector('link').textContent.trim();
+    const pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent.slice(0, 16) : '';
+    const issueUrl = /^https?:\/\//.test(link) ? link : 'https://tldr.tech';
 
-    const latest = data.items[0];
-    const issueUrl = /^https?:\/\//.test(latest.link || '') ? latest.link : 'https://tldr.tech';
-    const pubDate = latest.pubDate ? latest.pubDate.slice(0, 10) : '';
-
-    // Title is comma-separated story headlines e.g. "Story A 💰, Story B 💻, Story C 🤖"
-    const stories = latest.title.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
+    // Title is comma-separated headlines: "Story A 💰, Story B 💻, Story C 🤖"
+    const stories = title.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
 
     list.textContent = '';
     stories.forEach((headline, i) => {
       const li = document.createElement('li');
-
       const a = document.createElement('a');
       a.href = issueUrl;
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
       a.textContent = headline;
-
       li.appendChild(a);
-      if (i === 0) {
+      if (i === 0 && pubDate) {
         const date = document.createElement('span');
         date.className = 'news-score';
         date.textContent = pubDate;
