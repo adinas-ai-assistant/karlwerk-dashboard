@@ -173,7 +173,7 @@ body { transition: background 1.5s ease; }
   border: none !important;
   background:
     radial-gradient(ellipse at 50% 115%, rgba(215, 140, 90, 0.28) 0%, rgba(215, 140, 90, 0) 45%),
-    radial-gradient(ellipse at 50% 50%, rgba(160, 110, 190, 0.08) 30%, rgba(160, 110, 190, 0) 75%),
+    radial-gradient(ellipse at 50% 40%, rgba(160, 110, 200, 0.22) 20%, rgba(160, 110, 200, 0) 80%),
     rgba(255, 255, 255, 0.03) !important;
 }
 .sunset-alert .block-label { color: var(--peach); }
