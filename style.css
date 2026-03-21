@@ -171,7 +171,9 @@ body { transition: background 1.5s ease; }
 
 .sunset-alert {
   border: none !important;
-  background: linear-gradient(135deg, rgba(210, 130, 90, 0.38) 0%, rgba(225, 160, 100, 0.32) 50%, rgba(200, 120, 110, 0.36) 100%) !important;
+  background:
+    radial-gradient(ellipse at 50% 110%, rgba(215, 140, 90, 0.30) 0%, rgba(215, 140, 90, 0) 68%),
+    rgba(255, 255, 255, 0.03) !important;
 }
 .sunset-alert .block-label { color: var(--peach); }
 .sunset-countdown { font-size: 1.5rem; font-weight: 300; color: var(--text); letter-spacing: 0.04em; margin-top: 0.3rem; }
