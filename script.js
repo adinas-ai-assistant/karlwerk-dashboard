@@ -150,7 +150,7 @@ async function loadTldr() {
   const list = document.getElementById('tldr-list');
   try {
     const data = await fetch(
-      'https://api.rss2json.com/v1/api.json?rss_url=https://tldr.tech/api/rss/tech&count=1'
+      'https://api.rss2json.com/v1/api.json?rss_url=https://tldr.tech/api/rss/tech'
     ).then(r => r.json());
 
     if (!data.items || !data.items.length) throw new Error('No items');
