@@ -59,7 +59,8 @@ async function loadNews() {
       const li = document.createElement('li');
 
       const a = document.createElement('a');
-      a.href = story.url || 'https://news.ycombinator.com/item?id=' + story.id;
+      const rawUrl = story.url || '';
+      a.href = /^https?:\/\//.test(rawUrl) ? rawUrl : 'https://news.ycombinator.com/item?id=' + story.id;
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
       a.textContent = story.title; // safe: textContent only
