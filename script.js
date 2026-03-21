@@ -259,6 +259,8 @@ function checkSunsetAlert() {
 
   const goldenSec = sunsetSeconds - 40 * 60; // golden hour starts 40 min before sunset
   const diffToGolden = goldenSec - nowSec;
+  const fmt = s => String(Math.floor(s / 3600)).padStart(2, '0') + ':' + String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+  const goldenRange = fmt(goldenSec) + ' – ' + fmt(sunsetSeconds);
 
   // Show 2 hours before sunset, hide 10 min after sunset
   if (diffMin <= 120 && diffMin >= -10) {
@@ -272,12 +274,12 @@ function checkSunsetAlert() {
       // Counting down to golden hour start
       const h = Math.floor(diffToGolden / 3600), m = Math.floor((diffToGolden % 3600) / 60), s = diffToGolden % 60;
       if (cd) cd.textContent = 'starts in ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-      if (sub) sub.textContent = 'sunset at ' + String(Math.floor(sunsetSeconds / 3600)).padStart(2, '0') + ':' + String(Math.floor((sunsetSeconds % 3600) / 60)).padStart(2, '0');
+      if (sub) sub.textContent = goldenRange;
     } else {
       // Inside golden hour
       if (cd) cd.textContent = 'golden hour · go outside now';
       const remH = Math.floor(diffSec / 3600), remM = Math.floor((diffSec % 3600) / 60), remS = diffSec % 60;
-      if (sub) sub.textContent = 'sunset in ' + String(remH).padStart(2, '0') + ':' + String(remM).padStart(2, '0') + ':' + String(remS).padStart(2, '0');
+      if (sub) sub.textContent = goldenRange + ' · sunset in ' + String(remH).padStart(2, '0') + ':' + String(remM).padStart(2, '0') + ':' + String(remS).padStart(2, '0');
     }
   } else {
     block.style.display = 'none';
