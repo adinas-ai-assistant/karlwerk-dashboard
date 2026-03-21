@@ -1,3 +1,51 @@
+// Rain canvas
+(function () {
+  const canvas = document.getElementById('rain-canvas');
+  const ctx = canvas.getContext('2d');
+  const DROP_COUNT = 120;
+  const drops = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function randomDrop(startAtTop) {
+    return {
+      x: Math.random() * canvas.width,
+      y: startAtTop ? Math.random() * -canvas.height : Math.random() * canvas.height,
+      len: 10 + Math.random() * 20,
+      speed: 8 + Math.random() * 10,
+      opacity: 0.08 + Math.random() * 0.18,
+      width: 0.5 + Math.random() * 0.8
+    };
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < DROP_COUNT; i++) drops.push(randomDrop(false));
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drops.forEach(d => {
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x - d.len * 0.15, d.y + d.len);
+      ctx.strokeStyle = 'rgba(160, 185, 210, ' + d.opacity + ')';
+      ctx.lineWidth = d.width;
+      ctx.stroke();
+      d.y += d.speed;
+      d.x -= d.speed * 0.15;
+      if (d.y > canvas.height + d.len) {
+        Object.assign(d, randomDrop(true));
+        d.x = Math.random() * canvas.width;
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
 // Live clock
 function updateClock() {
   const now = new Date();

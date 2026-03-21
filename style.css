@@ -30,42 +30,13 @@ body::before {
   opacity: 0.5;
 }
 
-.rain {
+#rain-canvas {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 1;
-  overflow: hidden;
-}
-
-.rain::before, .rain::after {
-  content: '';
-  position: absolute;
-  top: -100%;
-  left: 0;
-  width: 100%;
-  height: 200%;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 4px,
-    rgba(140, 160, 180, 0.035) 4px,
-    rgba(140, 160, 180, 0.035) 5px
-  );
-  background-size: 3px 20px;
-  animation: rain 2.5s linear infinite;
-}
-
-.rain::after {
-  left: 50%;
-  animation-delay: -1.25s;
-  animation-duration: 3s;
-  opacity: 0.6;
-}
-
-@keyframes rain {
-  from { transform: translateY(0); }
-  to   { transform: translateY(50%); }
 }
 
 main {
