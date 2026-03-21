@@ -125,7 +125,9 @@ header { margin-bottom: 2.5rem; }
 }
 
 #news-list,
-#tldr-list {
+#tldr-tech-list,
+#tldr-design-list,
+#tldr-product-list {
   list-style: none;
   display: flex;
   flex-direction: column;
@@ -133,22 +135,32 @@ header { margin-bottom: 2.5rem; }
 }
 
 #news-list li,
-#tldr-list li { font-size: 0.85rem; line-height: 1.5; }
+#tldr-tech-list li,
+#tldr-design-list li,
+#tldr-product-list li { font-size: 0.85rem; line-height: 1.5; }
 
 #news-list li.loading,
-#tldr-list li.loading { color: var(--muted); }
+#tldr-tech-list li.loading,
+#tldr-design-list li.loading,
+#tldr-product-list li.loading { color: var(--muted); }
 
 #news-list a,
-#tldr-list a {
+#tldr-tech-list a,
+#tldr-design-list a,
+#tldr-product-list a {
   color: var(--blue);
   text-decoration: none;
 }
 
 #news-list a:visited,
-#tldr-list a:visited { color: var(--blue-visited); }
+#tldr-tech-list a:visited,
+#tldr-design-list a:visited,
+#tldr-product-list a:visited { color: var(--blue-visited); }
 
 #news-list a:hover,
-#tldr-list a:hover {
+#tldr-tech-list a:hover,
+#tldr-design-list a:hover,
+#tldr-product-list a:hover {
   color: var(--blue-hover);
   text-decoration: underline;
 }

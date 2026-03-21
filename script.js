@@ -146,35 +146,40 @@ async function loadNews() {
   }
 }
 
-async function loadTldr() {
-  const list = document.getElementById('tldr-list');
-  try {
-    const data = await fetch('/api/tldr').then(r => r.json());
-    const title = data.title || '';
-    const issueUrl = data.link || 'https://tldr.tech';
-    const pubDate = data.date || '';
-
-    if (!title) throw new Error('No title');
-
-    const stories = title.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
-
-    list.textContent = '';
-    stories.forEach((headline, i) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = issueUrl;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = headline;
-      li.appendChild(a);
-      list.appendChild(li);
-    });
-  } catch (e) {
-    list.textContent = '';
+function renderTldrFeed(listEl, feed) {
+  const stories = (feed.title || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
+  listEl.textContent = '';
+  if (!stories.length) {
     const li = document.createElement('li');
     li.className = 'loading';
-    li.textContent = 'could not load tldr';
-    list.appendChild(li);
+    li.textContent = 'could not load';
+    listEl.appendChild(li);
+    return;
+  }
+  stories.forEach(headline => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = feed.link || 'https://tldr.tech';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = headline;
+    li.appendChild(a);
+    listEl.appendChild(li);
+  });
+}
+
+async function loadTldr() {
+  try {
+    const feeds = await fetch('/api/tldr').then(r => r.json());
+    feeds.forEach(feed => {
+      const listEl = document.getElementById('tldr-' + feed.key + '-list');
+      if (listEl) renderTldrFeed(listEl, feed);
+    });
+  } catch (e) {
+    ['tech', 'design', 'product'].forEach(key => {
+      const listEl = document.getElementById('tldr-' + key + '-list');
+      if (listEl) { listEl.textContent = ''; const li = document.createElement('li'); li.className = 'loading'; li.textContent = 'could not load'; listEl.appendChild(li); }
+    });
   }
 }
 
