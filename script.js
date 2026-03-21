@@ -149,23 +149,10 @@ async function loadNews() {
 async function loadTldr() {
   const list = document.getElementById('tldr-list');
   try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 8000);
-    const xml = await fetch('https://tldr.tech/api/rss/tech', { signal: ctrl.signal }).then(r => r.text());
-    clearTimeout(timer);
-
-    // Extract first <item> block via regex — avoids DOMParser <link> void-element quirks on Safari
-    const itemMatch = xml.match(/<item>([\s\S]*?)<\/item>/);
-    if (!itemMatch) throw new Error('No item');
-    const itemXml = itemMatch[1];
-
-    const titleMatch = itemXml.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/);
-    const linkMatch = itemXml.match(/<link[^>]*>(https?:\/\/[^<]+)<\/link>/);
-    const dateMatch = itemXml.match(/<pubDate[^>]*>([^<]{1,30})<\/pubDate>/);
-
-    const title = titleMatch ? titleMatch[1].trim() : '';
-    const issueUrl = linkMatch ? linkMatch[1].trim() : 'https://tldr.tech';
-    const pubDate = dateMatch ? dateMatch[1].slice(0, 16) : '';
+    const data = await fetch('/api/tldr').then(r => r.json());
+    const title = data.title || '';
+    const issueUrl = data.link || 'https://tldr.tech';
+    const pubDate = data.date || '';
 
     if (!title) throw new Error('No title');
 
