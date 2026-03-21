@@ -1,9 +1,11 @@
-// Weather canvas — supports rain, storm, snow, off
+// Weather canvas — rain, storm (+ lightning), snow, cloudy (clouds), sunny (rays), off
 const weatherCanvas = (function () {
   const canvas = document.getElementById('rain-canvas');
   const ctx = canvas.getContext('2d');
   let mode = 'rain';
   let drops = [];
+  let clouds = [];
+  let lightning = null;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -37,45 +39,128 @@ const weatherCanvas = (function () {
     };
   }
 
+  function makeCloud(scattered) {
+    return {
+      x: scattered ? Math.random() * canvas.width : canvas.width + 350,
+      y: 30 + Math.random() * (canvas.height * 0.42),
+      speed: 0.12 + Math.random() * 0.22,
+      size: 75 + Math.random() * 130,
+      opacity: 0.055 + Math.random() * 0.065,
+    };
+  }
+
+  function drawCloud(x, y, size, opacity) {
+    const puffs = [[0,0,0.50],[0.38,-0.12,0.38],[-0.32,0.06,0.36],[0.18,0.14,0.42],[0.60,0.06,0.30],[-0.54,0.10,0.27]];
+    ctx.fillStyle = 'rgba(200, 212, 228, ' + opacity + ')';
+    puffs.forEach(([px, py, pr]) => {
+      ctx.beginPath();
+      ctx.arc(x + px * size, y + py * size, pr * size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function triggerLightning() {
+    const x = canvas.width * (0.15 + Math.random() * 0.7);
+    const pts = [{ x, y: -10 }];
+    let cy = -10;
+    while (cy < canvas.height * 0.65) {
+      cy += 25 + Math.random() * 45;
+      pts.push({ x: pts[pts.length - 1].x + (Math.random() - 0.5) * 75, y: cy });
+    }
+    lightning = { pts, opacity: 1.0 };
+  }
+
+  function drawLightning() {
+    if (!lightning && Math.random() < 0.004) triggerLightning();
+    if (!lightning) return;
+    ctx.fillStyle = 'rgba(210, 228, 255, ' + (lightning.opacity * 0.09) + ')';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    [{ w: 8, a: 0.30 }, { w: 1.5, a: 1.0 }].forEach(({ w, a }) => {
+      ctx.beginPath();
+      ctx.moveTo(lightning.pts[0].x, lightning.pts[0].y);
+      lightning.pts.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.strokeStyle = 'rgba(220, 242, 255, ' + (lightning.opacity * a) + ')';
+      ctx.lineWidth = w;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    });
+    lightning.opacity -= 0.045;
+    if (lightning.opacity <= 0) lightning = null;
+  }
+
+  function drawSunny(t) {
+    const cx = canvas.width / 2;
+    const cy = canvas.height + 90;
+    const numRays = 10;
+    for (let i = 0; i < numRays; i++) {
+      const angle = Math.PI + (Math.PI * i / numRays);
+      const pulse = 0.72 + 0.28 * Math.sin(t * 0.0007 + i * 0.65);
+      const len = canvas.height * 1.25 * pulse;
+      const x2 = cx + Math.cos(angle) * len;
+      const y2 = cy + Math.sin(angle) * len;
+      const grd = ctx.createLinearGradient(cx, cy, x2, y2);
+      grd.addColorStop(0, 'rgba(255, 190, 70, 0.13)');
+      grd.addColorStop(0.55, 'rgba(255, 165, 40, 0.05)');
+      grd.addColorStop(1, 'rgba(255, 165, 40, 0)');
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = grd;
+      ctx.lineWidth = 55 + 18 * Math.sin(t * 0.0009 + i);
+      ctx.stroke();
+    }
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, canvas.height * 0.65);
+    glow.addColorStop(0, 'rgba(255, 175, 50, 0.09)');
+    glow.addColorStop(1, 'rgba(255, 175, 50, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
   function setMode(newMode) {
     mode = newMode;
     drops = [];
-    if (newMode === 'off') return;
-    const count = newMode === 'snow' ? 120 : newMode === 'storm' ? 260 : 180;
-    for (let i = 0; i < count; i++)
-      drops.push(newMode === 'snow' ? makeSnow(true) : makeRain(true, newMode === 'storm'));
+    clouds = [];
+    lightning = null;
+    if (newMode === 'rain' || newMode === 'storm') {
+      const n = newMode === 'storm' ? 260 : 180;
+      for (let i = 0; i < n; i++) drops.push(makeRain(true, newMode === 'storm'));
+    } else if (newMode === 'snow') {
+      for (let i = 0; i < 120; i++) drops.push(makeSnow(true));
+    } else if (newMode === 'cloudy' || newMode === 'partly_cloudy') {
+      const n = newMode === 'partly_cloudy' ? 3 : 5;
+      for (let i = 0; i < n; i++) clouds.push(makeCloud(true));
+    }
   }
 
-  function draw() {
+  function draw(t) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (mode !== 'off') {
-      const isSnow = mode === 'snow';
-      const isStorm = mode === 'storm';
+    if (mode === 'sunny') {
+      drawSunny(t);
+    } else if (mode === 'cloudy' || mode === 'partly_cloudy') {
+      clouds.forEach(c => {
+        drawCloud(c.x, c.y, c.size, c.opacity);
+        c.x -= c.speed;
+        if (c.x < -c.size * 1.6) Object.assign(c, makeCloud(false));
+      });
+    } else if (mode === 'rain' || mode === 'storm') {
+      if (mode === 'storm') drawLightning();
       drops.forEach(d => {
-        if (isSnow) {
-          d.drift += d.driftSpeed;
-          d.x += d.dx + Math.sin(d.drift) * 0.4;
-          d.y += d.speed;
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(220, 235, 255, ' + d.opacity + ')';
-          ctx.fill();
-          if (d.y > canvas.height + 10) Object.assign(d, makeSnow(false));
-        } else {
-          const grd = ctx.createLinearGradient(d.x, d.y, d.x - d.dx * (d.len / d.speed), d.y - d.len);
-          grd.addColorStop(0, 'rgba(174, 210, 240, ' + d.opacity + ')');
-          grd.addColorStop(1, 'rgba(174, 210, 240, 0)');
-          ctx.beginPath();
-          ctx.moveTo(d.x, d.y);
-          ctx.lineTo(d.x - d.dx * (d.len / d.speed), d.y - d.len);
-          ctx.strokeStyle = grd;
-          ctx.lineWidth = d.width;
-          ctx.lineCap = 'round';
-          ctx.stroke();
-          d.x += d.dx;
-          d.y += d.speed;
-          if (d.y > canvas.height + d.len || d.x < -150) Object.assign(d, makeRain(false, isStorm));
-        }
+        const grd = ctx.createLinearGradient(d.x, d.y, d.x - d.dx * (d.len / d.speed), d.y - d.len);
+        grd.addColorStop(0, 'rgba(174, 210, 240, ' + d.opacity + ')');
+        grd.addColorStop(1, 'rgba(174, 210, 240, 0)');
+        ctx.beginPath(); ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x - d.dx * (d.len / d.speed), d.y - d.len);
+        ctx.strokeStyle = grd; ctx.lineWidth = d.width; ctx.lineCap = 'round'; ctx.stroke();
+        d.x += d.dx; d.y += d.speed;
+        if (d.y > canvas.height + d.len || d.x < -150) Object.assign(d, makeRain(false, mode === 'storm'));
+      });
+    } else if (mode === 'snow') {
+      drops.forEach(d => {
+        d.drift += d.driftSpeed;
+        d.x += d.dx + Math.sin(d.drift) * 0.4; d.y += d.speed;
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(220, 235, 255, ' + d.opacity + ')'; ctx.fill();
+        if (d.y > canvas.height + 10) Object.assign(d, makeSnow(false));
       });
     }
     requestAnimationFrame(draw);
@@ -84,27 +169,34 @@ const weatherCanvas = (function () {
   resize();
   window.addEventListener('resize', resize);
   setMode('rain');
-  draw();
+  requestAnimationFrame(draw);
   return { setMode };
 })();
 
-// Weather modes — bg colour, canvas mode, icon
+// Weather modes — bg colour, canvas mode, emoji icon
 const WEATHER_MODES = {
-  sunny:         { bg: '#1d1b11', canvas: 'off',   icon: '\u2600' }, // ☀
-  partly_cloudy: { bg: '#1a1a1a', canvas: 'off',   icon: '\u26C5' }, // ⛅
-  cloudy:        { bg: '#161820', canvas: 'off',   icon: '\u2601' }, // ☁
-  rainy:         { bg: '#1a1a1a', canvas: 'rain',  icon: '\u2602' }, // ☂
-  snowy:         { bg: '#141820', canvas: 'snow',  icon: '\u2744' }, // ❄
-  stormy:        { bg: '#0e0e14', canvas: 'storm', icon: '\u26C8' }, // ⛈
+  sunny:         { bg: '#1d1b11', canvas: 'sunny',         icon: '☀️' },
+  partly_cloudy: { bg: '#1a1a1a', canvas: 'partly_cloudy', icon: '⛅' },
+  cloudy:        { bg: '#161820', canvas: 'cloudy',        icon: '☁️' },
+  foggy:         { bg: '#141618', canvas: 'cloudy',        icon: '🌫️' },
+  rainy:         { bg: '#1a1a1a', canvas: 'rain',          icon: '🌧️' },
+  snowy:         { bg: '#141820', canvas: 'snow',          icon: '❄️' },
+  stormy:        { bg: '#0e0e14', canvas: 'storm',         icon: '⛈️' },
 };
 
 function codeToMode(code, isDay) {
   if (code === 0) return isDay ? 'sunny' : 'partly_cloudy';
   if (code <= 2) return 'partly_cloudy';
-  if (code === 3 || (code >= 45 && code <= 48)) return 'cloudy';
+  if (code === 3) return 'cloudy';
+  if (code >= 45 && code <= 48) return 'foggy';
   if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return 'snowy';
   if (code >= 95) return 'stormy';
   return 'rainy';
+}
+
+function codeToEmoji(code, isDay) {
+  const mode = codeToMode(code, isDay);
+  return (WEATHER_MODES[mode] || WEATHER_MODES.rainy).icon;
 }
 
 function applyWeatherMode(modeName) {
@@ -276,8 +368,11 @@ async function loadCities() {
       const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat +
         '&longitude=' + city.lon + '&current_weather=true&forecast_days=1';
       const data = await fetch(url).then(r => r.json());
-      const el = document.getElementById('city-temp-' + city.id);
-      if (el) el.textContent = Math.round(data.current_weather.temperature) + '°';
+      const cw = data.current_weather;
+      const tempEl = document.getElementById('city-temp-' + city.id);
+      const emojiEl = document.getElementById('city-emoji-' + city.id);
+      if (tempEl) tempEl.textContent = Math.round(cw.temperature) + '°';
+      if (emojiEl) emojiEl.textContent = codeToEmoji(cw.weathercode, cw.is_day);
     } catch (e) {}
   }));
 }

@@ -6,7 +6,7 @@
   <title>karlwerk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <canvas id="rain-canvas"></canvas>
@@ -20,6 +20,7 @@
           <option value="sunny">sunny</option>
           <option value="partly_cloudy">partly cloudy</option>
           <option value="cloudy">cloudy</option>
+          <option value="foggy">foggy</option>
           <option value="rainy">rainy</option>
           <option value="snowy">snowy</option>
           <option value="stormy">stormy</option>
@@ -48,20 +49,23 @@
     <section class="block" id="cities-block">
       <div class="block-label">world</div>
       <div class="cities-list">
-        <div class="city-row">
+        <div class="city-row" data-city="bajamar">
           <span class="city-name">bajamar</span>
           <span class="city-time" id="city-time-bajamar">--:--</span>
           <span class="city-temp" id="city-temp-bajamar">--°</span>
+          <span class="city-emoji" id="city-emoji-bajamar"></span>
         </div>
-        <div class="city-row">
+        <div class="city-row" data-city="osaka">
           <span class="city-name">osaka</span>
           <span class="city-time" id="city-time-osaka">--:--</span>
           <span class="city-temp" id="city-temp-osaka">--°</span>
+          <span class="city-emoji" id="city-emoji-osaka"></span>
         </div>
-        <div class="city-row">
+        <div class="city-row" data-city="la">
           <span class="city-name">los angeles</span>
           <span class="city-time" id="city-time-la">--:--</span>
           <span class="city-temp" id="city-temp-la">--°</span>
+          <span class="city-emoji" id="city-emoji-la"></span>
         </div>
       </div>
     </section>
@@ -118,6 +122,6 @@
       <ul id="tldr-marketing-list"><li class="loading">loading...</li></ul>
     </section>
   </main>
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=6"></script>
 </body>
 </html>
