@@ -1,5 +1,7 @@
 const FEEDS = [
   { key: 'tech', url: 'https://tldr.tech/api/rss/tech' },
+  { key: 'ai', url: 'https://tldr.tech/api/rss/ai' },
+  { key: 'devops', url: 'https://tldr.tech/api/rss/devops' },
   { key: 'design', url: 'https://tldr.tech/api/rss/design' },
   { key: 'product', url: 'https://tldr.tech/api/rss/product' },
 ];
