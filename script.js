@@ -210,6 +210,7 @@ function applyWeatherMode(modeName) {
   const cfg = WEATHER_MODES[modeName] || WEATHER_MODES.rainy;
   document.body.style.background = cfg.bg;
   document.body.style.backgroundAttachment = 'fixed';
+  document.body.dataset.weather = modeName;
   const iconEl = document.getElementById('weather-icon');
   if (iconEl) iconEl.textContent = cfg.icon;
   weatherCanvas.setMode(cfg.canvas);

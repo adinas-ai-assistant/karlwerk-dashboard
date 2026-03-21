@@ -93,6 +93,15 @@ header { margin-bottom: 2.5rem; }
   -webkit-backdrop-filter: blur(14px);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  transition: background 1.5s ease, border-color 1.5s ease;
+}
+
+/* Brighter skies need darker panels to preserve text contrast */
+body[data-weather="sunny"] .block,
+body[data-weather="partly_cloudy"] .block,
+body[data-weather="foggy"] .block {
+  background: rgba(8, 14, 28, 0.58);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .block-label {
