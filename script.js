@@ -146,5 +146,43 @@ async function loadNews() {
   }
 }
 
+async function loadTldr() {
+  const list = document.getElementById('tldr-list');
+  try {
+    const data = await fetch(
+      'https://api.rss2json.com/v1/api.json?rss_url=https://tldr.tech/api/rss/tech&count=3'
+    ).then(r => r.json());
+
+    if (data.status !== 'ok') throw new Error('RSS error');
+
+    list.textContent = '';
+    data.items.forEach(item => {
+      const li = document.createElement('li');
+
+      const a = document.createElement('a');
+      const rawUrl = item.link || '';
+      a.href = /^https?:\/\//.test(rawUrl) ? rawUrl : 'https://tldr.tech';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = item.title;
+
+      const date = document.createElement('span');
+      date.className = 'news-score';
+      date.textContent = item.pubDate ? item.pubDate.slice(0, 10) : '';
+
+      li.appendChild(a);
+      li.appendChild(date);
+      list.appendChild(li);
+    });
+  } catch (e) {
+    list.textContent = '';
+    const li = document.createElement('li');
+    li.className = 'loading';
+    li.textContent = 'could not load tldr';
+    list.appendChild(li);
+  }
+}
+
 loadWeather();
 loadNews();
+loadTldr();
