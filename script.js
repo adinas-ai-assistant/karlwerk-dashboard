@@ -113,7 +113,7 @@ async function loadNews() {
   try {
     const ids = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json').then(r => r.json());
     const top3 = await Promise.all(
-      ids.slice(0, 3).map(id =>
+      ids.slice(0, 5).map(id =>
         fetch('https://hacker-news.firebaseio.com/v0/item/' + id + '.json').then(r => r.json())
       )
     );
