@@ -8,7 +8,9 @@
   --muted: #666;
   --amber: #c9a96e;
   --green: #7aab8a;
-  --blue: #8ab4c9;
+  --blue: #7ec8e3;
+  --blue-visited: #b09dc8;
+  --blue-hover: #aadff0;
 }
 
 html, body {
@@ -133,8 +135,14 @@ header { margin-bottom: 2.5rem; }
   text-decoration: none;
 }
 
+#news-list a:visited,
+#tldr-list a:visited { color: var(--blue-visited); }
+
 #news-list a:hover,
-#tldr-list a:hover { text-decoration: underline; }
+#tldr-list a:hover {
+  color: var(--blue-hover);
+  text-decoration: underline;
+}
 
 .news-score {
   display: block;
