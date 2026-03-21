@@ -263,8 +263,8 @@ function checkSunsetAlert() {
     const cd = document.getElementById('sunset-countdown');
     const sub = document.getElementById('sunset-sub');
     if (diffSec > 0) {
-      const m = Math.floor(diffSec / 60), s = diffSec % 60;
-      if (cd) cd.textContent = 'sunset in ' + m + ':' + String(s).padStart(2, '0');
+      const h = Math.floor(diffSec / 3600), m = Math.floor((diffSec % 3600) / 60), s = diffSec % 60;
+      if (cd) cd.textContent = 'sunset in ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
       if (sub) sub.textContent = diffMin > 40 ? 'golden hour begins in ~' + Math.round(diffMin - 40) + ' min' : 'golden hour · go outside now';
     } else {
       if (cd) cd.textContent = 'sun has set';
