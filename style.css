@@ -131,6 +131,9 @@ header { margin-bottom: 2.5rem; }
 #tldr-tech-list,
 #tldr-ai-list,
 #tldr-devops-list,
+#tldr-infosec-list,
+#tldr-fintech-list,
+#tldr-marketing-list,
 #tldr-design-list,
 #tldr-product-list {
   list-style: none;
@@ -143,6 +146,9 @@ header { margin-bottom: 2.5rem; }
 #tldr-tech-list li,
 #tldr-ai-list li,
 #tldr-devops-list li,
+#tldr-infosec-list li,
+#tldr-fintech-list li,
+#tldr-marketing-list li,
 #tldr-design-list li,
 #tldr-product-list li { font-size: 0.85rem; line-height: 1.5; }
 
@@ -150,6 +156,9 @@ header { margin-bottom: 2.5rem; }
 #tldr-tech-list li.loading,
 #tldr-ai-list li.loading,
 #tldr-devops-list li.loading,
+#tldr-infosec-list li.loading,
+#tldr-fintech-list li.loading,
+#tldr-marketing-list li.loading,
 #tldr-design-list li.loading,
 #tldr-product-list li.loading { color: var(--muted); }
 
@@ -157,6 +166,9 @@ header { margin-bottom: 2.5rem; }
 #tldr-tech-list a,
 #tldr-ai-list a,
 #tldr-devops-list a,
+#tldr-infosec-list a,
+#tldr-fintech-list a,
+#tldr-marketing-list a,
 #tldr-design-list a,
 #tldr-product-list a {
   color: var(--blue);
@@ -167,6 +179,9 @@ header { margin-bottom: 2.5rem; }
 #tldr-tech-list a:visited,
 #tldr-ai-list a:visited,
 #tldr-devops-list a:visited,
+#tldr-infosec-list a:visited,
+#tldr-fintech-list a:visited,
+#tldr-marketing-list a:visited,
 #tldr-design-list a:visited,
 #tldr-product-list a:visited { color: var(--blue-visited); }
 
@@ -174,6 +189,9 @@ header { margin-bottom: 2.5rem; }
 #tldr-tech-list a:hover,
 #tldr-ai-list a:hover,
 #tldr-devops-list a:hover,
+#tldr-infosec-list a:hover,
+#tldr-fintech-list a:hover,
+#tldr-marketing-list a:hover,
 #tldr-design-list a:hover,
 #tldr-product-list a:hover {
   color: var(--blue-hover);

@@ -2,6 +2,9 @@ const FEEDS = [
   { key: 'tech', url: 'https://tldr.tech/api/rss/tech' },
   { key: 'ai', url: 'https://tldr.tech/api/rss/ai' },
   { key: 'devops', url: 'https://tldr.tech/api/rss/devops' },
+  { key: 'infosec', url: 'https://tldr.tech/api/rss/infosec' },
+  { key: 'fintech', url: 'https://tldr.tech/api/rss/fintech' },
+  { key: 'marketing', url: 'https://tldr.tech/api/rss/marketing' },
   { key: 'design', url: 'https://tldr.tech/api/rss/design' },
   { key: 'product', url: 'https://tldr.tech/api/rss/product' },
 ];
