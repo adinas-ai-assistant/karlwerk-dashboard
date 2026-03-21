@@ -113,22 +113,28 @@ header { margin-bottom: 2.5rem; }
   letter-spacing: 0.08em;
 }
 
-#news-list {
+#news-list,
+#tldr-list {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
 }
 
-#news-list li { font-size: 0.85rem; line-height: 1.5; }
-#news-list li.loading { color: var(--muted); }
+#news-list li,
+#tldr-list li { font-size: 0.85rem; line-height: 1.5; }
 
-#news-list a {
+#news-list li.loading,
+#tldr-list li.loading { color: var(--muted); }
+
+#news-list a,
+#tldr-list a {
   color: var(--blue);
   text-decoration: none;
 }
 
-#news-list a:hover { text-decoration: underline; }
+#news-list a:hover,
+#tldr-list a:hover { text-decoration: underline; }
 
 .news-score {
   display: block;

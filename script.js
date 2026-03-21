@@ -167,12 +167,6 @@ async function loadTldr() {
       a.rel = 'noopener noreferrer';
       a.textContent = headline;
       li.appendChild(a);
-      if (i === 0 && pubDate) {
-        const date = document.createElement('span');
-        date.className = 'news-score';
-        date.textContent = pubDate;
-        li.appendChild(date);
-      }
       list.appendChild(li);
     });
   } catch (e) {
