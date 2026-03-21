@@ -271,7 +271,7 @@ function checkSunsetAlert() {
     } else if (diffToGolden > 0) {
       // Counting down to golden hour start
       const h = Math.floor(diffToGolden / 3600), m = Math.floor((diffToGolden % 3600) / 60), s = diffToGolden % 60;
-      if (cd) cd.textContent = 'golden hour in ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      if (cd) cd.textContent = 'starts in ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
       if (sub) sub.textContent = 'sunset at ' + String(Math.floor(sunsetSeconds / 3600)).padStart(2, '0') + ':' + String(Math.floor((sunsetSeconds % 3600) / 60)).padStart(2, '0');
     } else {
       // Inside golden hour
