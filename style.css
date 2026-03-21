@@ -66,9 +66,11 @@ header { margin-bottom: 2.5rem; }
   margin-top: 0.2rem;
 }
 
+.clock-seconds { color: var(--muted); }
+
 .block {
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   padding: 1.5rem;
@@ -120,6 +122,19 @@ header { margin-bottom: 2.5rem; }
 }
 
 .weather-row span span { color: var(--text); }
+
+.cities-list { display: flex; flex-direction: column; gap: 0.55rem; }
+
+.city-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-size: 0.85rem;
+}
+
+.city-name { flex: 1; color: var(--peach); letter-spacing: 0.05em; }
+.city-time { color: var(--text); }
+.city-temp { color: var(--amber); min-width: 3.5rem; text-align: right; }
 
 .uv-label {
   font-size: 0.7rem;

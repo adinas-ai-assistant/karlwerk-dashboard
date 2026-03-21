@@ -6,7 +6,7 @@
   <title>karlwerk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
   <canvas id="rain-canvas"></canvas>
@@ -26,6 +26,27 @@
         <span>&#8593; <span id="sunrise">--:--</span></span>
         <span>&#8595; <span id="sunset">--:--</span></span>
         <span>UV <span id="uv">--</span> <span id="uv-label" class="uv-label"></span></span>
+      </div>
+    </section>
+
+    <section class="block" id="cities-block">
+      <div class="block-label">world</div>
+      <div class="cities-list">
+        <div class="city-row">
+          <span class="city-name">bajamar</span>
+          <span class="city-time" id="city-time-bajamar">--:--</span>
+          <span class="city-temp" id="city-temp-bajamar">--°</span>
+        </div>
+        <div class="city-row">
+          <span class="city-name">osaka</span>
+          <span class="city-time" id="city-time-osaka">--:--</span>
+          <span class="city-temp" id="city-temp-osaka">--°</span>
+        </div>
+        <div class="city-row">
+          <span class="city-name">los angeles</span>
+          <span class="city-time" id="city-time-la">--:--</span>
+          <span class="city-temp" id="city-temp-la">--°</span>
+        </div>
       </div>
     </section>
 
@@ -51,6 +72,11 @@
       <ul id="tldr-ai-list"><li class="loading">loading...</li></ul>
     </section>
 
+    <section class="block" id="tldr-design-block">
+      <div class="block-label">tldr design</div>
+      <ul id="tldr-design-list"><li class="loading">loading...</li></ul>
+    </section>
+
     <section class="block" id="tldr-devops-block">
       <div class="block-label">tldr devops</div>
       <ul id="tldr-devops-list"><li class="loading">loading...</li></ul>
@@ -71,16 +97,11 @@
       <ul id="tldr-marketing-list"><li class="loading">loading...</li></ul>
     </section>
 
-    <section class="block" id="tldr-design-block">
-      <div class="block-label">tldr design</div>
-      <ul id="tldr-design-list"><li class="loading">loading...</li></ul>
-    </section>
-
     <section class="block" id="tldr-product-block">
       <div class="block-label">tldr product</div>
       <ul id="tldr-product-list"><li class="loading">loading...</li></ul>
     </section>
   </main>
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=4"></script>
 </body>
 </html>

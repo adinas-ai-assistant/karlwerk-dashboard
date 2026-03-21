@@ -62,13 +62,30 @@
   draw();
 })();
 
+const CITIES = [
+  { id: 'bajamar',  label: 'bajamar',     lat: 28.5574,  lon: -16.3383,  tz: 'Atlantic/Canary' },
+  { id: 'osaka',    label: 'osaka',       lat: 34.6937,  lon: 135.5023,  tz: 'Asia/Tokyo' },
+  { id: 'la',       label: 'los angeles', lat: 34.0522,  lon: -118.2437, tz: 'America/Los_Angeles' },
+];
+
 // Live clock
 function updateClock() {
   const now = new Date();
-  document.getElementById('clock').textContent =
-    now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const t = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const clockEl = document.getElementById('clock');
+  clockEl.textContent = '';
+  clockEl.appendChild(document.createTextNode(t.slice(0, 5)));
+  const secSpan = document.createElement('span');
+  secSpan.className = 'clock-seconds';
+  secSpan.textContent = t.slice(5);
+  clockEl.appendChild(secSpan);
+
   document.getElementById('date').textContent =
     now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  CITIES.forEach(city => {
+    const el = document.getElementById('city-time-' + city.id);
+    if (el) el.textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: city.tz });
+  });
 }
 updateClock();
 setInterval(updateClock, 1000);
@@ -187,6 +204,19 @@ async function loadTldr() {
   }
 }
 
+async function loadCities() {
+  await Promise.all(CITIES.map(async city => {
+    try {
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat +
+        '&longitude=' + city.lon + '&current_weather=true&forecast_days=1';
+      const data = await fetch(url).then(r => r.json());
+      const el = document.getElementById('city-temp-' + city.id);
+      if (el) el.textContent = Math.round(data.current_weather.temperature) + '°';
+    } catch (e) {}
+  }));
+}
+
 loadWeather();
 loadNews();
 loadTldr();
+loadCities();
