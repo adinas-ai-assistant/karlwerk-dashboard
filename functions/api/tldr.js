@@ -1,15 +1,16 @@
 const FEEDS = [
-  { key: 'tech', url: 'https://tldr.tech/api/rss/tech' },
-  { key: 'ai', url: 'https://tldr.tech/api/rss/ai' },
-  { key: 'devops', url: 'https://tldr.tech/api/rss/devops' },
-  { key: 'infosec', url: 'https://tldr.tech/api/rss/infosec' },
-  { key: 'fintech', url: 'https://tldr.tech/api/rss/fintech' },
-  { key: 'marketing', url: 'https://tldr.tech/api/rss/marketing' },
-  { key: 'design', url: 'https://tldr.tech/api/rss/design' },
-  { key: 'product', url: 'https://tldr.tech/api/rss/product' },
+  { key: 'tech', url: 'https://tldr.tech/api/rss/tech', type: 'tldr' },
+  { key: 'ai', url: 'https://tldr.tech/api/rss/ai', type: 'tldr' },
+  { key: 'devops', url: 'https://tldr.tech/api/rss/devops', type: 'tldr' },
+  { key: 'infosec', url: 'https://tldr.tech/api/rss/infosec', type: 'tldr' },
+  { key: 'fintech', url: 'https://tldr.tech/api/rss/fintech', type: 'tldr' },
+  { key: 'marketing', url: 'https://tldr.tech/api/rss/marketing', type: 'tldr' },
+  { key: 'design', url: 'https://tldr.tech/api/rss/design', type: 'tldr' },
+  { key: 'product', url: 'https://tldr.tech/api/rss/product', type: 'tldr' },
+  { key: 'benedict', url: 'https://www.ben-evans.com/benedictevans?format=rss', type: 'essays' },
 ];
 
-function parseItem(xml) {
+function parseTldrItem(xml) {
   const itemMatch = xml.match(/<item>([\s\S]*?)<\/item>/);
   if (!itemMatch) return { title: '', link: 'https://tldr.tech' };
   const item = itemMatch[1];
@@ -21,14 +22,34 @@ function parseItem(xml) {
   };
 }
 
+function parseEssayItems(xml) {
+  const items = [];
+  const itemRe = /<item>([\s\S]*?)<\/item>/g;
+  let match;
+  while ((match = itemRe.exec(xml)) !== null && items.length < 3) {
+    const item = match[1];
+    const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/);
+    const linkMatch = item.match(/<link[^>]*>(https?:\/\/[^<]+)<\/link>/);
+    const title = titleMatch ? titleMatch[1].trim() : '';
+    const link = linkMatch ? linkMatch[1].trim() : '';
+    if (title && link) items.push({ title, link });
+  }
+  return items;
+}
+
 export async function onRequest() {
   const results = await Promise.all(
-    FEEDS.map(async ({ key, url }) => {
+    FEEDS.map(async ({ key, url, type }) => {
       try {
         const xml = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }).then(r => r.text());
-        return { key, ...parseItem(xml) };
+        if (type === 'essays') {
+          return { key, type, items: parseEssayItems(xml) };
+        }
+        return { key, type, ...parseTldrItem(xml) };
       } catch {
-        return { key, title: '', link: 'https://tldr.tech' };
+        return type === 'essays'
+          ? { key, type, items: [] }
+          : { key, type, title: '', link: '' };
       }
     })
   );

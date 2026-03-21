@@ -67,10 +67,10 @@ header { margin-bottom: 2.5rem; }
 }
 
 .block {
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(33, 33, 33, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -128,6 +128,7 @@ header { margin-bottom: 2.5rem; }
 }
 
 #news-list,
+#tldr-benedict-list,
 #tldr-tech-list,
 #tldr-ai-list,
 #tldr-devops-list,
@@ -143,6 +144,7 @@ header { margin-bottom: 2.5rem; }
 }
 
 #news-list li,
+#tldr-benedict-list li,
 #tldr-tech-list li,
 #tldr-ai-list li,
 #tldr-devops-list li,
@@ -153,6 +155,7 @@ header { margin-bottom: 2.5rem; }
 #tldr-product-list li { font-size: 0.85rem; line-height: 1.5; }
 
 #news-list li.loading,
+#tldr-benedict-list li.loading,
 #tldr-tech-list li.loading,
 #tldr-ai-list li.loading,
 #tldr-devops-list li.loading,
@@ -163,6 +166,7 @@ header { margin-bottom: 2.5rem; }
 #tldr-product-list li.loading { color: var(--muted); }
 
 #news-list a,
+#tldr-benedict-list a,
 #tldr-tech-list a,
 #tldr-ai-list a,
 #tldr-devops-list a,
@@ -176,6 +180,7 @@ header { margin-bottom: 2.5rem; }
 }
 
 #news-list a:visited,
+#tldr-benedict-list a:visited,
 #tldr-tech-list a:visited,
 #tldr-ai-list a:visited,
 #tldr-devops-list a:visited,
@@ -186,6 +191,7 @@ header { margin-bottom: 2.5rem; }
 #tldr-product-list a:visited { color: var(--blue-visited); }
 
 #news-list a:hover,
+#tldr-benedict-list a:hover,
 #tldr-tech-list a:hover,
 #tldr-ai-list a:hover,
 #tldr-devops-list a:hover,

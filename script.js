@@ -147,7 +147,11 @@ async function loadNews() {
 }
 
 function renderTldrFeed(listEl, feed) {
-  const stories = (feed.title || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
+  const stories = feed.type === 'essays'
+    ? (feed.items || []).map(i => ({ title: i.title, link: i.link }))
+    : (feed.title || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 3)
+        .map(t => ({ title: t, link: feed.link || 'https://tldr.tech' }));
+
   listEl.textContent = '';
   if (!stories.length) {
     const li = document.createElement('li');
@@ -156,13 +160,13 @@ function renderTldrFeed(listEl, feed) {
     listEl.appendChild(li);
     return;
   }
-  stories.forEach(headline => {
+  stories.forEach(({ title, link }) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    a.href = feed.link || 'https://tldr.tech';
+    a.href = link;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
-    a.textContent = headline;
+    a.textContent = title;
     li.appendChild(a);
     listEl.appendChild(li);
   });
@@ -176,7 +180,7 @@ async function loadTldr() {
       if (listEl) renderTldrFeed(listEl, feed);
     });
   } catch (e) {
-    ['tech', 'ai', 'devops', 'infosec', 'fintech', 'marketing', 'design', 'product'].forEach(key => {
+    ['benedict', 'tech', 'ai', 'devops', 'infosec', 'fintech', 'marketing', 'design', 'product'].forEach(key => {
       const listEl = document.getElementById('tldr-' + key + '-list');
       if (listEl) { listEl.textContent = ''; const li = document.createElement('li'); li.className = 'loading'; li.textContent = 'could not load'; listEl.appendChild(li); }
     });
