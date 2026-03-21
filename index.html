@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>karlwerk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="rain"></div>
+  <main>
+    <header>
+      <div id="date"></div>
+      <div id="clock"></div>
+    </header>
+
+    <section class="block" id="weather-block">
+      <div class="block-label">// prague</div>
+      <div class="weather-temp"><span id="temp">--</span><span class="unit">°C</span></div>
+      <div class="weather-meta">
+        <span>feels like <span id="feels">--</span>°C</span>
+      </div>
+      <div class="weather-row">
+        <span>&#8593; <span id="sunrise">--:--</span></span>
+        <span>&#8595; <span id="sunset">--:--</span></span>
+        <span>UV <span id="uv">--</span> <span id="uv-label" class="uv-label"></span></span>
+      </div>
+    </section>
+
+    <section class="block" id="news-block">
+      <div class="block-label">// hacker news</div>
+      <ul id="news-list">
+        <li class="loading">loading...</li>
+      </ul>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

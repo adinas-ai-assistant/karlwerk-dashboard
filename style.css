@@ -1,0 +1,167 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #1a1a1a;
+  --surface: #212121;
+  --border: #2e2e2e;
+  --text: #c8c8c8;
+  --muted: #666;
+  --amber: #c9a96e;
+  --green: #7aab8a;
+  --blue: #8ab4c9;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.rain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.rain::before, .rain::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 4px,
+    rgba(140, 160, 180, 0.035) 4px,
+    rgba(140, 160, 180, 0.035) 5px
+  );
+  background-size: 3px 20px;
+  animation: rain 2.5s linear infinite;
+}
+
+.rain::after {
+  left: 50%;
+  animation-delay: -1.25s;
+  animation-duration: 3s;
+  opacity: 0.6;
+}
+
+@keyframes rain {
+  from { transform: translateY(0); }
+  to   { transform: translateY(50%); }
+}
+
+main {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+header { margin-bottom: 2.5rem; }
+
+#date {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#clock {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+.block {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.block-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.weather-temp {
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.unit {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin-left: 0.2rem;
+}
+
+.weather-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.weather-row {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--amber);
+  flex-wrap: wrap;
+}
+
+.weather-row span span { color: var(--text); }
+
+.uv-label {
+  font-size: 0.7rem;
+  color: var(--green);
+  letter-spacing: 0.08em;
+}
+
+#news-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+#news-list li { font-size: 0.85rem; line-height: 1.5; }
+#news-list li.loading { color: var(--muted); }
+
+#news-list a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+#news-list a:hover { text-decoration: underline; }
+
+.news-score {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
