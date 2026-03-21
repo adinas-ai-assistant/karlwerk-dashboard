@@ -41,22 +41,21 @@ const weatherCanvas = (function () {
 
   function makeCloud(scattered) {
     return {
-      x: scattered ? Math.random() * canvas.width : canvas.width + 350,
-      y: 30 + Math.random() * (canvas.height * 0.42),
-      speed: 0.12 + Math.random() * 0.22,
-      size: 75 + Math.random() * 130,
-      opacity: 0.15 + Math.random() * 0.14,
+      x: scattered ? Math.random() * canvas.width : canvas.width + 180,
+      y: 10 + Math.random() * (canvas.height * 0.22),
+      speed: 0.08 + Math.random() * 0.14,
+      size: 28 + Math.random() * 48,
+      opacity: 0.09 + Math.random() * 0.07,
     };
   }
 
   function drawCloud(x, y, size, opacity) {
     const puffs = [
-      [0, 0, 0.52], [0.40, -0.14, 0.42], [-0.36, 0.05, 0.40],
-      [0.20, 0.16, 0.44], [0.65, 0.04, 0.33], [-0.58, 0.08, 0.30],
-      [0.82, 0.14, 0.24], [-0.18, -0.10, 0.32], [0.48, 0.20, 0.28],
+      [0, 0, 0.52], [0.42, -0.15, 0.40], [-0.38, 0.06, 0.38],
+      [0.22, 0.17, 0.42], [0.68, 0.05, 0.30], [-0.60, 0.09, 0.28],
     ];
     ctx.save();
-    ctx.filter = 'blur(' + Math.round(size * 0.20) + 'px)';
+    ctx.filter = 'blur(' + Math.round(size * 0.28) + 'px)';
     ctx.fillStyle = 'rgba(215, 225, 240, ' + opacity + ')';
     puffs.forEach(([px, py, pr]) => {
       ctx.beginPath();
@@ -161,7 +160,7 @@ const weatherCanvas = (function () {
     } else if (newMode === 'snow') {
       for (let i = 0; i < 120; i++) drops.push(makeSnow(true));
     } else if (newMode === 'cloudy' || newMode === 'partly_cloudy') {
-      const n = newMode === 'partly_cloudy' ? 3 : 5;
+      const n = newMode === 'partly_cloudy' ? 5 : 9;
       for (let i = 0; i < n; i++) clouds.push(makeCloud(true));
     }
   }
