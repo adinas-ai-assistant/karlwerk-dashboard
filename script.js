@@ -41,28 +41,32 @@ const weatherCanvas = (function () {
 
   function makeCloud(scattered) {
     return {
-      x: scattered ? Math.random() * canvas.width : canvas.width + 180,
-      y: 10 + Math.random() * (canvas.height * 0.22),
+      x: scattered ? Math.random() * (canvas.width + 200) - 100 : canvas.width + 220,
+      y: 10 + Math.random() * (canvas.height * 0.28),
       speed: 0.08 + Math.random() * 0.14,
-      size: 28 + Math.random() * 48,
-      opacity: 0.09 + Math.random() * 0.07,
+      size: 55 + Math.random() * 80,
+      opacity: 0.22 + Math.random() * 0.18,
     };
   }
 
   function drawCloud(x, y, size, opacity) {
+    // Radial gradient per puff — soft edges that blend naturally, no blur filter needed
     const puffs = [
-      [0, 0, 0.52], [0.42, -0.15, 0.40], [-0.38, 0.06, 0.38],
-      [0.22, 0.17, 0.42], [0.68, 0.05, 0.30], [-0.60, 0.09, 0.28],
+      [0, 0, 0.52], [0.44, -0.16, 0.42], [-0.40, 0.05, 0.40],
+      [0.22, 0.18, 0.44], [0.70, 0.04, 0.32], [-0.62, 0.10, 0.30],
+      [0.86, 0.16, 0.24], [-0.20, -0.12, 0.30], [0.50, 0.22, 0.26],
     ];
-    ctx.save();
-    ctx.filter = 'blur(' + Math.round(size * 0.28) + 'px)';
-    ctx.fillStyle = 'rgba(215, 225, 240, ' + opacity + ')';
     puffs.forEach(([px, py, pr]) => {
+      const cx = x + px * size, cy = y + py * size, r = pr * size;
+      const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      grd.addColorStop(0, 'rgba(215, 225, 242, ' + opacity + ')');
+      grd.addColorStop(0.55, 'rgba(210, 220, 238, ' + (opacity * 0.55) + ')');
+      grd.addColorStop(1, 'rgba(210, 220, 238, 0)');
       ctx.beginPath();
-      ctx.arc(x + px * size, y + py * size, pr * size, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
       ctx.fill();
     });
-    ctx.restore();
   }
 
   function makeBoltPath(startX, startY, maxY, spread) {
