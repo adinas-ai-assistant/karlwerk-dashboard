@@ -2,7 +2,8 @@
 (function () {
   const canvas = document.getElementById('rain-canvas');
   const ctx = canvas.getContext('2d');
-  const DROP_COUNT = 120;
+  const DROP_COUNT = 180;
+  const WIND = 0.18; // lean factor
   const drops = [];
 
   function resize() {
@@ -10,35 +11,50 @@
     canvas.height = window.innerHeight;
   }
 
-  function randomDrop(startAtTop) {
+  function makeDrop(randomY) {
+    const speed = 12 + Math.random() * 14;
+    const len = 18 + Math.random() * 38;
     return {
-      x: Math.random() * canvas.width,
-      y: startAtTop ? Math.random() * -canvas.height : Math.random() * canvas.height,
-      len: 10 + Math.random() * 20,
-      speed: 8 + Math.random() * 10,
-      opacity: 0.08 + Math.random() * 0.18,
-      width: 0.5 + Math.random() * 0.8
+      x: Math.random() * (canvas.width + 200) - 100,
+      y: randomY ? Math.random() * canvas.height : -len - Math.random() * canvas.height,
+      len,
+      speed,
+      dx: -speed * WIND,
+      opacity: 0.25 + Math.random() * 0.45,
+      width: 0.6 + Math.random() * 0.8
     };
   }
 
   resize();
   window.addEventListener('resize', resize);
-  for (let i = 0; i < DROP_COUNT; i++) drops.push(randomDrop(false));
+  for (let i = 0; i < DROP_COUNT; i++) drops.push(makeDrop(true));
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drops.forEach(d => {
+      // gradient streak: bright tip fading to transparent tail
+      const grd = ctx.createLinearGradient(
+        d.x, d.y,
+        d.x - d.dx * (d.len / d.speed),
+        d.y - d.len
+      );
+      grd.addColorStop(0, 'rgba(174, 210, 240, ' + d.opacity + ')');
+      grd.addColorStop(1, 'rgba(174, 210, 240, 0)');
+
       ctx.beginPath();
       ctx.moveTo(d.x, d.y);
-      ctx.lineTo(d.x - d.len * 0.15, d.y + d.len);
-      ctx.strokeStyle = 'rgba(160, 185, 210, ' + d.opacity + ')';
+      ctx.lineTo(d.x - d.dx * (d.len / d.speed), d.y - d.len);
+      ctx.strokeStyle = grd;
       ctx.lineWidth = d.width;
+      ctx.lineCap = 'round';
       ctx.stroke();
+
+      d.x += d.dx;
       d.y += d.speed;
-      d.x -= d.speed * 0.15;
-      if (d.y > canvas.height + d.len) {
-        Object.assign(d, randomDrop(true));
-        d.x = Math.random() * canvas.width;
+
+      if (d.y > canvas.height + d.len || d.x < -150) {
+        const nd = makeDrop(false);
+        Object.assign(d, nd);
       }
     });
     requestAnimationFrame(draw);
