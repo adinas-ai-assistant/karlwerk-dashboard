@@ -150,28 +150,35 @@ async function loadTldr() {
   const list = document.getElementById('tldr-list');
   try {
     const data = await fetch(
-      'https://api.rss2json.com/v1/api.json?rss_url=https://tldr.tech/api/rss/tech&count=3'
+      'https://api.rss2json.com/v1/api.json?rss_url=https://tldr.tech/api/rss/tech&count=1'
     ).then(r => r.json());
 
-    if (data.status !== 'ok') throw new Error('RSS error');
+    if (!data.items || !data.items.length) throw new Error('No items');
+
+    const latest = data.items[0];
+    const issueUrl = /^https?:\/\//.test(latest.link || '') ? latest.link : 'https://tldr.tech';
+    const pubDate = latest.pubDate ? latest.pubDate.slice(0, 10) : '';
+
+    // Title is comma-separated story headlines e.g. "Story A 💰, Story B 💻, Story C 🤖"
+    const stories = latest.title.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
 
     list.textContent = '';
-    data.items.forEach(item => {
+    stories.forEach((headline, i) => {
       const li = document.createElement('li');
 
       const a = document.createElement('a');
-      const rawUrl = item.link || '';
-      a.href = /^https?:\/\//.test(rawUrl) ? rawUrl : 'https://tldr.tech';
+      a.href = issueUrl;
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
-      a.textContent = item.title;
-
-      const date = document.createElement('span');
-      date.className = 'news-score';
-      date.textContent = item.pubDate ? item.pubDate.slice(0, 10) : '';
+      a.textContent = headline;
 
       li.appendChild(a);
-      li.appendChild(date);
+      if (i === 0) {
+        const date = document.createElement('span');
+        date.className = 'news-score';
+        date.textContent = pubDate;
+        li.appendChild(date);
+      }
       list.appendChild(li);
     });
   } catch (e) {
