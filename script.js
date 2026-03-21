@@ -452,3 +452,9 @@ loadWeather();
 loadNews();
 loadTldr();
 loadCities();
+
+// TEST: force sunset alert visible — remove when done testing
+(function () {
+  const t = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Prague', hour: '2-digit', minute: '2-digit', second: '2-digit' }).split(':').map(Number);
+  sunsetSeconds = t[0] * 3600 + t[1] * 60 + t[2] + 45 * 60;
+})();
