@@ -50,41 +50,68 @@ const weatherCanvas = (function () {
   }
 
   function drawCloud(x, y, size, opacity) {
-    const puffs = [[0,0,0.50],[0.38,-0.12,0.38],[-0.32,0.06,0.36],[0.18,0.14,0.42],[0.60,0.06,0.30],[-0.54,0.10,0.27]];
-    ctx.fillStyle = 'rgba(200, 212, 228, ' + opacity + ')';
+    const puffs = [
+      [0, 0, 0.52], [0.40, -0.14, 0.42], [-0.36, 0.05, 0.40],
+      [0.20, 0.16, 0.44], [0.65, 0.04, 0.33], [-0.58, 0.08, 0.30],
+      [0.82, 0.14, 0.24], [-0.18, -0.10, 0.32], [0.48, 0.20, 0.28],
+    ];
+    ctx.save();
+    ctx.filter = 'blur(' + Math.round(size * 0.20) + 'px)';
+    ctx.fillStyle = 'rgba(215, 225, 240, ' + opacity + ')';
     puffs.forEach(([px, py, pr]) => {
       ctx.beginPath();
       ctx.arc(x + px * size, y + py * size, pr * size, 0, Math.PI * 2);
       ctx.fill();
     });
+    ctx.restore();
+  }
+
+  function makeBoltPath(startX, startY, maxY, spread) {
+    const pts = [{ x: startX, y: startY }];
+    let cy = startY;
+    while (cy < maxY) {
+      cy += 22 + Math.random() * 40;
+      pts.push({ x: pts[pts.length - 1].x + (Math.random() - 0.5) * spread, y: cy });
+    }
+    return pts;
   }
 
   function triggerLightning() {
     const x = canvas.width * (0.15 + Math.random() * 0.7);
-    const pts = [{ x, y: -10 }];
-    let cy = -10;
-    while (cy < canvas.height * 0.65) {
-      cy += 25 + Math.random() * 45;
-      pts.push({ x: pts[pts.length - 1].x + (Math.random() - 0.5) * 75, y: cy });
-    }
-    lightning = { pts, opacity: 1.0 };
+    const pts = makeBoltPath(x, -10, canvas.height * 0.65, 72);
+    const branches = [];
+    pts.forEach((p, i) => {
+      if (i > 1 && i < pts.length - 1 && Math.random() < 0.30) {
+        const branchLen = canvas.height * (0.08 + Math.random() * 0.14);
+        branches.push(makeBoltPath(p.x, p.y, p.y + branchLen, 50));
+      }
+    });
+    lightning = { pts, branches, opacity: 1.0 };
+  }
+
+  function strokeBolt(pts, layers, baseOpacity) {
+    layers.forEach(({ w, a }) => {
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      pts.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.strokeStyle = 'rgba(225, 245, 255, ' + (baseOpacity * a) + ')';
+      ctx.lineWidth = w;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    });
   }
 
   function drawLightning() {
     if (!lightning && Math.random() < 0.004) triggerLightning();
     if (!lightning) return;
-    ctx.fillStyle = 'rgba(210, 228, 255, ' + (lightning.opacity * 0.09) + ')';
+    // Screen flash
+    ctx.fillStyle = 'rgba(210, 230, 255, ' + (lightning.opacity * 0.12) + ')';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    [{ w: 8, a: 0.30 }, { w: 1.5, a: 1.0 }].forEach(({ w, a }) => {
-      ctx.beginPath();
-      ctx.moveTo(lightning.pts[0].x, lightning.pts[0].y);
-      lightning.pts.forEach(p => ctx.lineTo(p.x, p.y));
-      ctx.strokeStyle = 'rgba(220, 242, 255, ' + (lightning.opacity * a) + ')';
-      ctx.lineWidth = w;
-      ctx.lineJoin = 'round';
-      ctx.stroke();
-    });
-    lightning.opacity -= 0.045;
+    // Main bolt: 4 layers — wide haze, outer glow, mid glow, bright core
+    strokeBolt(lightning.pts, [{ w: 18, a: 0.08 }, { w: 7, a: 0.25 }, { w: 2.5, a: 0.70 }, { w: 0.8, a: 1.0 }], lightning.opacity);
+    // Branches: thinner, dimmer
+    lightning.branches.forEach(b => strokeBolt(b, [{ w: 5, a: 0.10 }, { w: 1.8, a: 0.40 }, { w: 0.6, a: 0.80 }], lightning.opacity * 0.65));
+    lightning.opacity -= 0.042;
     if (lightning.opacity <= 0) lightning = null;
   }
 
