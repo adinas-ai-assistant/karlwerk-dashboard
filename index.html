@@ -6,7 +6,7 @@
   <title>karlwerk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
   <canvas id="rain-canvas"></canvas>
@@ -37,13 +37,29 @@
             <span>feels like <span id="feels">--</span>°C</span>
           </div>
           <div class="weather-row">
-            <span>&#8593; <span id="sunrise">--:--</span></span>
-            <span>&#8595; <span id="sunset">--:--</span></span>
+            <span>
+              <svg class="sunrise-icon" width="13" height="10" viewBox="0 0 14 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="8.5" x2="13" y2="8.5"/><path d="M3.5 8.5 A3.5 3.5 0 0 1 10.5 8.5"/>
+                <line x1="7" y1="6.5" x2="7" y2="1.5"/><polyline points="5,3.5 7,1.5 9,3.5"/>
+              </svg><span id="sunrise">--:--</span>
+            </span>
+            <span>
+              <svg class="sunset-icon" width="13" height="10" viewBox="0 0 14 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="8.5" x2="13" y2="8.5"/><path d="M3.5 8.5 A3.5 3.5 0 0 1 10.5 8.5"/>
+                <line x1="7" y1="1.5" x2="7" y2="6.5"/><polyline points="5,4.5 7,6.5 9,4.5"/>
+              </svg><span id="sunset">--:--</span>
+            </span>
             <span>UV <span id="uv">--</span> <span id="uv-label" class="uv-label"></span></span>
           </div>
         </div>
         <div class="weather-icon" id="weather-icon"></div>
       </div>
+    </section>
+
+    <section class="block sunset-alert" id="sunset-alert-block" style="display:none">
+      <div class="block-label">🌅 golden hour</div>
+      <div class="sunset-countdown" id="sunset-countdown">--:--</div>
+      <div class="sunset-sub" id="sunset-sub"></div>
     </section>
 
     <section class="block" id="cities-block">
@@ -122,6 +138,6 @@
       <ul id="tldr-marketing-list"><li class="loading">loading...</li></ul>
     </section>
   </main>
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>

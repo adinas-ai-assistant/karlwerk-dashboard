@@ -7,6 +7,7 @@
   --text: #c8c8c8;
   --muted: #666;
   --amber: #c9a96e;
+  --yellow: #d4c47a;
   --peach: #d4a99a;
   --green: #7aab8a;
   --blue: #7ec8e3;
@@ -74,7 +75,7 @@ header { margin-bottom: 2.5rem; }
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--yellow);
 }
 
 #clock {
@@ -84,7 +85,7 @@ header { margin-bottom: 2.5rem; }
   margin-top: 0.2rem;
 }
 
-.clock-seconds { color: var(--muted); }
+.clock-seconds { color: var(--yellow); opacity: 0.65; }
 
 .block {
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -167,6 +168,13 @@ body { transition: background 1.5s ease; }
 }
 
 .weather-row span span { color: var(--text); }
+
+.sunset-alert { border-color: rgba(201, 169, 110, 0.35) !important; }
+.sunset-alert .block-label { color: var(--amber); }
+.sunset-countdown { font-size: 1.5rem; font-weight: 300; color: var(--amber); letter-spacing: 0.04em; margin-top: 0.3rem; }
+.sunset-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+
+.sunrise-icon, .sunset-icon { display: inline-block; vertical-align: middle; margin-right: 0.3rem; }
 
 .cities-list { display: flex; flex-direction: column; gap: 0.55rem; }
 

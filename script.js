@@ -246,6 +246,35 @@ function applyWeatherMode(modeName) {
   weatherCanvas.setMode(cfg.canvas);
 }
 
+let sunsetSeconds = null; // seconds since midnight, Prague time
+
+function checkSunsetAlert() {
+  const block = document.getElementById('sunset-alert-block');
+  if (!block || sunsetSeconds === null) return;
+
+  const t = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Prague', hour: '2-digit', minute: '2-digit', second: '2-digit' }).split(':').map(Number);
+  const nowSec = t[0] * 3600 + t[1] * 60 + t[2];
+  const diffSec = sunsetSeconds - nowSec;
+  const diffMin = diffSec / 60;
+
+  // Show 2 hours before sunset, hide 10 min after
+  if (diffMin <= 120 && diffMin >= -10) {
+    block.style.display = '';
+    const cd = document.getElementById('sunset-countdown');
+    const sub = document.getElementById('sunset-sub');
+    if (diffSec > 0) {
+      const m = Math.floor(diffSec / 60), s = diffSec % 60;
+      if (cd) cd.textContent = 'sunset in ' + m + ':' + String(s).padStart(2, '0');
+      if (sub) sub.textContent = diffMin > 40 ? 'golden hour begins in ~' + Math.round(diffMin - 40) + ' min' : 'golden hour · go outside now';
+    } else {
+      if (cd) cd.textContent = 'sun has set';
+      if (sub) sub.textContent = 'blue hour in progress';
+    }
+  } else {
+    block.style.display = 'none';
+  }
+}
+
 const CITIES = [
   { id: 'bajamar',  label: 'bajamar',     lat: 28.5574,  lon: -16.3383,  tz: 'Atlantic/Canary' },
   { id: 'osaka',    label: 'osaka',       lat: 34.6937,  lon: 135.5023,  tz: 'Asia/Tokyo' },
@@ -270,6 +299,7 @@ function updateClock() {
     const el = document.getElementById('city-time-' + city.id);
     if (el) el.textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: city.tz });
   });
+  checkSunsetAlert();
 }
 updateClock();
 setInterval(updateClock, 1000);
@@ -301,6 +331,8 @@ async function loadWeather() {
     document.getElementById('feels').textContent = Math.round(daily.apparent_temperature_max[0]);
     document.getElementById('sunrise').textContent = fmtTime(daily.sunrise[0]);
     document.getElementById('sunset').textContent = fmtTime(daily.sunset[0]);
+    const sp = daily.sunset[0].slice(11, 16).split(':');
+    sunsetSeconds = parseInt(sp[0]) * 3600 + parseInt(sp[1]) * 60;
     const uv = Math.round(daily.uv_index_max[0]);
     document.getElementById('uv').textContent = uv;
     document.getElementById('uv-label').textContent = uvLabel(uv);
