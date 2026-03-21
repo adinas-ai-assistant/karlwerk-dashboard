@@ -45,7 +45,7 @@ const weatherCanvas = (function () {
       y: 30 + Math.random() * (canvas.height * 0.42),
       speed: 0.12 + Math.random() * 0.22,
       size: 75 + Math.random() * 130,
-      opacity: 0.055 + Math.random() * 0.065,
+      opacity: 0.15 + Math.random() * 0.14,
     };
   }
 
@@ -89,31 +89,38 @@ const weatherCanvas = (function () {
   }
 
   function drawSunny(t) {
-    const cx = canvas.width / 2;
-    const cy = canvas.height + 90;
-    const numRays = 10;
-    for (let i = 0; i < numRays; i++) {
-      const angle = Math.PI + (Math.PI * i / numRays);
-      const pulse = 0.72 + 0.28 * Math.sin(t * 0.0007 + i * 0.65);
-      const len = canvas.height * 1.25 * pulse;
-      const x2 = cx + Math.cos(angle) * len;
-      const y2 = cy + Math.sin(angle) * len;
-      const grd = ctx.createLinearGradient(cx, cy, x2, y2);
-      grd.addColorStop(0, 'rgba(255, 190, 70, 0.13)');
-      grd.addColorStop(0.55, 'rgba(255, 165, 40, 0.05)');
-      grd.addColorStop(1, 'rgba(255, 165, 40, 0)');
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(x2, y2);
-      ctx.strokeStyle = grd;
-      ctx.lineWidth = 55 + 18 * Math.sin(t * 0.0009 + i);
-      ctx.stroke();
-    }
-    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, canvas.height * 0.65);
-    glow.addColorStop(0, 'rgba(255, 175, 50, 0.09)');
-    glow.addColorStop(1, 'rgba(255, 175, 50, 0)');
-    ctx.fillStyle = glow;
+    const cx = canvas.width * 0.5;
+    const cy = canvas.height * 0.30;
+    const pulse = 0.88 + 0.12 * Math.sin(t * 0.0006);
+
+    // Wide ambient haze around sun
+    const haze = ctx.createRadialGradient(cx, cy, 0, cx, cy, canvas.height * 0.55 * pulse);
+    haze.addColorStop(0, 'rgba(255, 230, 160, 0.18)');
+    haze.addColorStop(0.35, 'rgba(255, 210, 100, 0.08)');
+    haze.addColorStop(1, 'rgba(255, 200, 80, 0)');
+    ctx.fillStyle = haze;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Sun corona glow
+    const corona = ctx.createRadialGradient(cx, cy, 0, cx, cy, 90 * pulse);
+    corona.addColorStop(0, 'rgba(255, 248, 210, 0.85)');
+    corona.addColorStop(0.25, 'rgba(255, 230, 150, 0.45)');
+    corona.addColorStop(0.6, 'rgba(255, 210, 100, 0.12)');
+    corona.addColorStop(1, 'rgba(255, 200, 80, 0)');
+    ctx.fillStyle = corona;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 90 * pulse, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sun disc
+    const disc = ctx.createRadialGradient(cx - 4, cy - 4, 0, cx, cy, 26 * pulse);
+    disc.addColorStop(0, 'rgba(255, 255, 240, 1)');
+    disc.addColorStop(0.6, 'rgba(255, 240, 190, 0.95)');
+    disc.addColorStop(1, 'rgba(255, 220, 140, 0.7)');
+    ctx.fillStyle = disc;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 26 * pulse, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   function setMode(newMode) {
@@ -173,15 +180,15 @@ const weatherCanvas = (function () {
   return { setMode };
 })();
 
-// Weather modes — bg colour, canvas mode, emoji icon
+// Weather modes — sky gradient bg, canvas mode, emoji icon
 const WEATHER_MODES = {
-  sunny:         { bg: '#1d1b11', canvas: 'sunny',         icon: '☀️' },
-  partly_cloudy: { bg: '#1a1a1a', canvas: 'partly_cloudy', icon: '⛅' },
-  cloudy:        { bg: '#161820', canvas: 'cloudy',        icon: '☁️' },
-  foggy:         { bg: '#141618', canvas: 'cloudy',        icon: '🌫️' },
-  rainy:         { bg: '#1a1a1a', canvas: 'rain',          icon: '🌧️' },
-  snowy:         { bg: '#141820', canvas: 'snow',          icon: '❄️' },
-  stormy:        { bg: '#0e0e14', canvas: 'storm',         icon: '⛈️' },
+  sunny:         { bg: 'linear-gradient(180deg, #1a3a6e 0%, #2e6bbf 45%, #5a9fd8 100%)',         canvas: 'sunny',         icon: '☀️' },
+  partly_cloudy: { bg: 'linear-gradient(180deg, #1e3254 0%, #2a508e 50%, #3a70b8 100%)',         canvas: 'partly_cloudy', icon: '⛅' },
+  cloudy:        { bg: 'linear-gradient(180deg, #181e30 0%, #22304e 45%, #2e4060 100%)',         canvas: 'cloudy',        icon: '☁️' },
+  foggy:         { bg: 'linear-gradient(180deg, #484f58 0%, #70808e 45%, #98aab8 100%)',         canvas: 'cloudy',        icon: '🌫️' },
+  rainy:         { bg: 'linear-gradient(180deg, #101620 0%, #182030 50%, #1a2535 100%)',         canvas: 'rain',          icon: '🌧️' },
+  snowy:         { bg: 'linear-gradient(180deg, #181e2c 0%, #222e46 45%, #2c3a52 100%)',         canvas: 'snow',          icon: '❄️' },
+  stormy:        { bg: 'linear-gradient(180deg, #06060e 0%, #0c0e18 50%, #080a10 100%)',         canvas: 'storm',         icon: '⛈️' },
 };
 
 function codeToMode(code, isDay) {
@@ -201,8 +208,8 @@ function codeToEmoji(code, isDay) {
 
 function applyWeatherMode(modeName) {
   const cfg = WEATHER_MODES[modeName] || WEATHER_MODES.rainy;
-  document.documentElement.style.setProperty('--bg', cfg.bg);
   document.body.style.background = cfg.bg;
+  document.body.style.backgroundAttachment = 'fixed';
   const iconEl = document.getElementById('weather-icon');
   if (iconEl) iconEl.textContent = cfg.icon;
   weatherCanvas.setMode(cfg.canvas);

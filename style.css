@@ -16,7 +16,7 @@
 
 html, body {
   min-height: 100vh;
-  background: var(--bg);
+  background: #101620; /* default until JS sets weather mode */
   color: var(--text);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 15px;
