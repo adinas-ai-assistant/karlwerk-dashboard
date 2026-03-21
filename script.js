@@ -149,17 +149,26 @@ async function loadNews() {
 async function loadTldr() {
   const list = document.getElementById('tldr-list');
   try {
-    const xml = await fetch('https://tldr.tech/api/rss/tech').then(r => r.text());
-    const doc = new DOMParser().parseFromString(xml, 'text/xml');
-    const item = doc.querySelector('item');
-    if (!item) throw new Error('No item');
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const xml = await fetch('https://tldr.tech/api/rss/tech', { signal: ctrl.signal }).then(r => r.text());
+    clearTimeout(timer);
 
-    const title = item.querySelector('title').textContent;
-    const link = item.querySelector('link').textContent.trim();
-    const pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent.slice(0, 16) : '';
-    const issueUrl = /^https?:\/\//.test(link) ? link : 'https://tldr.tech';
+    // Extract first <item> block via regex — avoids DOMParser <link> void-element quirks on Safari
+    const itemMatch = xml.match(/<item>([\s\S]*?)<\/item>/);
+    if (!itemMatch) throw new Error('No item');
+    const itemXml = itemMatch[1];
 
-    // Title is comma-separated headlines: "Story A 💰, Story B 💻, Story C 🤖"
+    const titleMatch = itemXml.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/);
+    const linkMatch = itemXml.match(/<link[^>]*>(https?:\/\/[^<]+)<\/link>/);
+    const dateMatch = itemXml.match(/<pubDate[^>]*>([^<]{1,30})<\/pubDate>/);
+
+    const title = titleMatch ? titleMatch[1].trim() : '';
+    const issueUrl = linkMatch ? linkMatch[1].trim() : 'https://tldr.tech';
+    const pubDate = dateMatch ? dateMatch[1].slice(0, 16) : '';
+
+    if (!title) throw new Error('No title');
+
     const stories = title.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
 
     list.textContent = '';
