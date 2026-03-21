@@ -169,7 +169,10 @@ body { transition: background 1.5s ease; }
 
 .weather-row span span { color: var(--text); }
 
-.sunset-alert { border-color: rgba(201, 169, 110, 0.35) !important; }
+.sunset-alert {
+  border: none !important;
+  background: linear-gradient(135deg, rgba(180, 80, 15, 0.32) 0%, rgba(210, 130, 30, 0.22) 50%, rgba(160, 70, 10, 0.28) 100%) !important;
+}
 .sunset-alert .block-label { color: var(--amber); }
 .sunset-countdown { font-size: 1.5rem; font-weight: 300; color: var(--amber); letter-spacing: 0.04em; margin-top: 0.3rem; }
 .sunset-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
