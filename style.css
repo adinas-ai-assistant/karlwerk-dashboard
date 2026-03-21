@@ -52,6 +52,24 @@ main {
 
 header { margin-bottom: 2.5rem; }
 
+#weather-test {
+  margin-top: 0.8rem;
+}
+
+#weather-override {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  outline: none;
+}
+
+#weather-override option { background: #1a1a1a; }
+
 #date {
   font-size: 0.75rem;
   letter-spacing: 0.12em;
@@ -93,6 +111,24 @@ header { margin-bottom: 2.5rem; }
 .block-label a:hover {
   color: var(--text);
 }
+
+.weather-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.weather-info { flex: 1; }
+
+.weather-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  opacity: 0.85;
+  font-style: normal;
+}
+
+body { transition: background 1.5s ease; }
 
 .weather-temp {
   font-size: 3rem;

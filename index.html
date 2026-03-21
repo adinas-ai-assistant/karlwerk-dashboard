@@ -6,7 +6,7 @@
   <title>karlwerk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
   <canvas id="rain-canvas"></canvas>
@@ -14,18 +14,34 @@
     <header>
       <div id="date"></div>
       <div id="clock"></div>
+      <div id="weather-test">
+        <select id="weather-override">
+          <option value="">weather: auto</option>
+          <option value="sunny">sunny</option>
+          <option value="partly_cloudy">partly cloudy</option>
+          <option value="cloudy">cloudy</option>
+          <option value="rainy">rainy</option>
+          <option value="snowy">snowy</option>
+          <option value="stormy">stormy</option>
+        </select>
+      </div>
     </header>
 
     <section class="block" id="weather-block">
       <div class="block-label">prague</div>
-      <div class="weather-temp"><span id="temp">--</span><span class="unit">°C</span></div>
-      <div class="weather-meta">
-        <span>feels like <span id="feels">--</span>°C</span>
-      </div>
-      <div class="weather-row">
-        <span>&#8593; <span id="sunrise">--:--</span></span>
-        <span>&#8595; <span id="sunset">--:--</span></span>
-        <span>UV <span id="uv">--</span> <span id="uv-label" class="uv-label"></span></span>
+      <div class="weather-body">
+        <div class="weather-info">
+          <div class="weather-temp"><span id="temp">--</span><span class="unit">°C</span></div>
+          <div class="weather-meta">
+            <span>feels like <span id="feels">--</span>°C</span>
+          </div>
+          <div class="weather-row">
+            <span>&#8593; <span id="sunrise">--:--</span></span>
+            <span>&#8595; <span id="sunset">--:--</span></span>
+            <span>UV <span id="uv">--</span> <span id="uv-label" class="uv-label"></span></span>
+          </div>
+        </div>
+        <div class="weather-icon" id="weather-icon"></div>
       </div>
     </section>
 
@@ -77,9 +93,9 @@
       <ul id="tldr-design-list"><li class="loading">loading...</li></ul>
     </section>
 
-    <section class="block" id="tldr-devops-block">
-      <div class="block-label">tldr devops</div>
-      <ul id="tldr-devops-list"><li class="loading">loading...</li></ul>
+    <section class="block" id="tldr-product-block">
+      <div class="block-label">tldr product</div>
+      <ul id="tldr-product-list"><li class="loading">loading...</li></ul>
     </section>
 
     <section class="block" id="tldr-infosec-block">
@@ -92,16 +108,16 @@
       <ul id="tldr-fintech-list"><li class="loading">loading...</li></ul>
     </section>
 
+    <section class="block" id="tldr-devops-block">
+      <div class="block-label">tldr devops</div>
+      <ul id="tldr-devops-list"><li class="loading">loading...</li></ul>
+    </section>
+
     <section class="block" id="tldr-marketing-block">
       <div class="block-label">tldr marketing</div>
       <ul id="tldr-marketing-list"><li class="loading">loading...</li></ul>
     </section>
-
-    <section class="block" id="tldr-product-block">
-      <div class="block-label">tldr product</div>
-      <ul id="tldr-product-list"><li class="loading">loading...</li></ul>
-    </section>
   </main>
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
