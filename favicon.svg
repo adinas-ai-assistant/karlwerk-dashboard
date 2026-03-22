@@ -1,14 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#181e2c"/>
+  <defs>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f5d08a"/>
+      <stop offset="100%" stop-color="#e8845a"/>
+    </radialGradient>
+    <linearGradient id="rays" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0a060"/>
+      <stop offset="100%" stop-color="#c06090"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="#181020"/>
   <!-- sun disc -->
-  <circle cx="16" cy="16" r="5.5" fill="#c9a96e"/>
+  <circle cx="16" cy="16" r="5.5" fill="url(#sun)"/>
   <!-- rays -->
-  <line x1="16" y1="7.5" x2="16" y2="5"   stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
-  <line x1="16" y1="27" x2="16" y2="24.5" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
-  <line x1="7.5" y1="16" x2="5"   y2="16" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
-  <line x1="27"  y1="16" x2="24.5" y2="16" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
-  <line x1="10.1" y1="10.1" x2="8.4" y2="8.4"   stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
-  <line x1="21.9" y1="10.1" x2="23.6" y2="8.4"  stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
-  <line x1="10.1" y1="21.9" x2="8.4" y2="23.6"  stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
-  <line x1="21.9" y1="21.9" x2="23.6" y2="23.6" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="7.5" x2="16" y2="5"    stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="27"  x2="16" y2="24.5" stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="7.5" y1="16" x2="5"   y2="16"  stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="27"  y1="16" x2="24.5" y2="16" stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="10.1" y1="10.1" x2="8.4"  y2="8.4"   stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="21.9" y1="10.1" x2="23.6" y2="8.4"   stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="10.1" y1="21.9" x2="8.4"  y2="23.6"  stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="21.9" y1="21.9" x2="23.6" y2="23.6"  stroke="url(#rays)" stroke-width="2" stroke-linecap="round"/>
 </svg>
