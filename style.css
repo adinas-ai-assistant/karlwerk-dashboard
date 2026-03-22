@@ -161,10 +161,9 @@ body { transition: background 1.5s ease; }
 
 .weather-row {
   display: flex;
-  gap: 1.5rem;
+  justify-content: space-between;
   font-size: 0.85rem;
   color: var(--amber);
-  flex-wrap: wrap;
 }
 
 .weather-row span span { color: var(--text); }
