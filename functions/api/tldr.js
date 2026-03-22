@@ -25,12 +25,15 @@ function parseTldrItem(xml) {
 
 function parseEssayItems(xml) {
   const items = [];
-  const itemRe = /<item>([\s\S]*?)<\/item>/g;
+  // Support both RSS (<item>) and Atom (<entry>) formats
+  const itemRe = /<(?:item|entry)>([\s\S]*?)<\/(?:item|entry)>/g;
   let match;
   while ((match = itemRe.exec(xml)) !== null && items.length < 3) {
     const item = match[1];
     const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/);
-    const linkMatch = item.match(/<link[^>]*>(https?:\/\/[^<]+)<\/link>/);
+    // RSS: <link>url</link> — Atom: <link href="url" .../>
+    const linkMatch = item.match(/<link[^>]*>(https?:\/\/[^<]+)<\/link>/) ||
+                      item.match(/<link[^>]*href=["'](https?:\/\/[^"']+)["'][^>]*\/?>/);
     const title = titleMatch ? titleMatch[1].trim() : '';
     const link = linkMatch ? linkMatch[1].trim() : '';
     if (title && link) items.push({ title, link });
