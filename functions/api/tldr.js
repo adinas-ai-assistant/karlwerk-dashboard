@@ -8,6 +8,7 @@ const FEEDS = [
   { key: 'design', url: 'https://tldr.tech/api/rss/design', type: 'tldr' },
   { key: 'product', url: 'https://tldr.tech/api/rss/product', type: 'tldr' },
   { key: 'benedict', url: 'https://www.ben-evans.com/benedictevans?format=rss', type: 'essays' },
+  { key: 'morningbrew', url: 'https://www.morningbrew.com/feed.xml', type: 'essays' },
 ];
 
 function parseTldrItem(xml) {
