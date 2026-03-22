@@ -61,7 +61,7 @@ export async function onRequest() {
   return new Response(JSON.stringify(results), {
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=1800',
+      'Cache-Control': 'private, max-age=0, must-revalidate',
     },
   });
 }
