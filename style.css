@@ -207,7 +207,8 @@ body { transition: background 1.5s ease; }
 
 #news-list,
 #tldr-benedict-list,
-#tldr-morningbrew-list,
+#tldr-figmalion-list,
+#tldr-nejm-list,
 #tldr-tech-list,
 #tldr-ai-list,
 #tldr-devops-list,
@@ -224,7 +225,8 @@ body { transition: background 1.5s ease; }
 
 #news-list li,
 #tldr-benedict-list li,
-#tldr-morningbrew-list li,
+#tldr-figmalion-list li,
+#tldr-nejm-list li,
 #tldr-tech-list li,
 #tldr-ai-list li,
 #tldr-devops-list li,
@@ -236,7 +238,8 @@ body { transition: background 1.5s ease; }
 
 #news-list li.loading,
 #tldr-benedict-list li.loading,
-#tldr-morningbrew-list li.loading,
+#tldr-figmalion-list li.loading,
+#tldr-nejm-list li.loading,
 #tldr-tech-list li.loading,
 #tldr-ai-list li.loading,
 #tldr-devops-list li.loading,
@@ -248,7 +251,8 @@ body { transition: background 1.5s ease; }
 
 #news-list a,
 #tldr-benedict-list a,
-#tldr-morningbrew-list a,
+#tldr-figmalion-list a,
+#tldr-nejm-list a,
 #tldr-tech-list a,
 #tldr-ai-list a,
 #tldr-devops-list a,
@@ -263,7 +267,8 @@ body { transition: background 1.5s ease; }
 
 #news-list a:visited,
 #tldr-benedict-list a:visited,
-#tldr-morningbrew-list a:visited,
+#tldr-figmalion-list a:visited,
+#tldr-nejm-list a:visited,
 #tldr-tech-list a:visited,
 #tldr-ai-list a:visited,
 #tldr-devops-list a:visited,
@@ -275,7 +280,8 @@ body { transition: background 1.5s ease; }
 
 #news-list a:hover,
 #tldr-benedict-list a:hover,
-#tldr-morningbrew-list a:hover,
+#tldr-figmalion-list a:hover,
+#tldr-nejm-list a:hover,
 #tldr-tech-list a:hover,
 #tldr-ai-list a:hover,
 #tldr-devops-list a:hover,
