@@ -385,12 +385,7 @@ async function loadNews() {
       a.rel = 'noopener noreferrer';
       a.textContent = story.title; // safe: textContent only
 
-      const score = document.createElement('span');
-      score.className = 'news-score';
-      score.textContent = story.score + ' points';
-
       li.appendChild(a);
-      li.appendChild(score);
       list.appendChild(li);
     });
   } catch (e) {

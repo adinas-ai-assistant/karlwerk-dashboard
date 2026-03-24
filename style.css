@@ -4,15 +4,15 @@
   --bg: #1a1a1a;
   --surface: #212121;
   --border: #2e2e2e;
-  --text: #c8c8c8;
-  --muted: #666;
-  --amber: #c9a96e;
-  --yellow: #d4c47a;
-  --peach: #d4a99a;
-  --green: #7aab8a;
-  --blue: #7ec8e3;
-  --blue-visited: #b09dc8;
-  --blue-hover: #aadff0;
+  --text: #dcdcdc;
+  --muted: #888;
+  --amber: #d4b07a;
+  --yellow: #ddd088;
+  --peach: #dbb8ac;
+  --green: #8abf9a;
+  --blue: #9dd8ee;
+  --blue-visited: #baaed8;
+  --blue-hover: #c4ecf8;
 }
 
 html, body {
@@ -20,7 +20,7 @@ html, body {
   background: #101620; /* default until JS sets weather mode */
   color: var(--text);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
 }
 
@@ -88,8 +88,8 @@ header { margin-bottom: 2.5rem; }
 .clock-seconds { color: var(--yellow); opacity: 0.65; }
 
 .block {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   padding: 1.5rem;
@@ -162,7 +162,7 @@ body { transition: background 1.5s ease; }
 .weather-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--amber);
 }
 
@@ -187,7 +187,7 @@ body { transition: background 1.5s ease; }
   display: flex;
   align-items: baseline;
   gap: 0.8rem;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
 }
 
 .city-name { flex: 1; letter-spacing: 0.05em; }
@@ -232,7 +232,7 @@ body { transition: background 1.5s ease; }
 #tldr-fintech-list li,
 #tldr-marketing-list li,
 #tldr-design-list li,
-#tldr-product-list li { font-size: 0.85rem; line-height: 1.5; }
+#tldr-product-list li { font-size: 0.92rem; line-height: 1.6; }
 
 #news-list li.loading,
 #tldr-benedict-list li.loading,
@@ -288,9 +288,3 @@ body { transition: background 1.5s ease; }
   text-decoration: underline;
 }
 
-.news-score {
-  display: block;
-  font-size: 0.7rem;
-  color: var(--muted);
-  margin-top: 0.15rem;
-}
