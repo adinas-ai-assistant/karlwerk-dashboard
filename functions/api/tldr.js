@@ -27,7 +27,7 @@ function parseTldrItem(xml) {
 function parseEssayItems(xml) {
   const items = [];
   // Support both RSS (<item>) and Atom (<entry>) formats
-  const itemRe = /<(?:item|entry)>([\s\S]*?)<\/(?:item|entry)>/g;
+  const itemRe = /<(?:item|entry)[^>]*>([\s\S]*?)<\/(?:item|entry)>/g;
   let match;
   while ((match = itemRe.exec(xml)) !== null && items.length < 3) {
     const item = match[1];
@@ -36,7 +36,7 @@ function parseEssayItems(xml) {
     const linkMatch = item.match(/<link[^>]*>(https?:\/\/[^<]+)<\/link>/) ||
                       item.match(/<link[^>]*href=["'](https?:\/\/[^"']+)["'][^>]*\/?>/);
     const title = titleMatch ? titleMatch[1].trim() : '';
-    const link = linkMatch ? linkMatch[1].trim() : '';
+    const link = linkMatch ? linkMatch[1].trim().replace(/&amp;/g, '&') : '';
     if (title && link) items.push({ title, link });
   }
   return items;
