@@ -171,6 +171,13 @@ body { transition: background 1.5s ease; }
 .weather-row > span { white-space: nowrap; }
 .weather-row span span { color: var(--text); }
 
+.weather-uv {
+  font-size: 0.9rem;
+  color: var(--amber);
+  margin-top: 0.5rem;
+}
+.weather-uv span { color: var(--text); }
+
 .sunset-alert {
   border: none !important;
   background:
