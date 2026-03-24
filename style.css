@@ -129,9 +129,10 @@ body[data-weather="foggy"] .block {
   gap: 1rem;
 }
 
-.weather-info { flex: 1; }
+.weather-info { flex: 1; min-width: 0; overflow: hidden; }
 
 .weather-icon {
+  flex-shrink: 0;
   font-size: 3.2rem;
   line-height: 1;
   margin-top: 0.1rem;
@@ -161,9 +162,10 @@ body { transition: background 1.5s ease; }
 
 .weather-row {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   font-size: 0.9rem;
   color: var(--amber);
+  overflow: hidden;
 }
 
 .weather-row > span { white-space: nowrap; }
