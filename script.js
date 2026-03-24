@@ -436,7 +436,7 @@ async function loadTldr() {
       if (listEl) renderTldrFeed(listEl, feed);
     });
   } catch (e) {
-    ['benedict', 'figmalion', 'nejm', 'tech', 'ai', 'devops', 'infosec', 'fintech', 'marketing', 'design', 'product'].forEach(key => {
+    ['benedict', 'other', 'tech', 'ai', 'devops', 'infosec', 'fintech', 'marketing', 'design', 'product'].forEach(key => {
       const listEl = document.getElementById('tldr-' + key + '-list');
       if (listEl) { listEl.textContent = ''; const li = document.createElement('li'); li.className = 'loading'; li.textContent = 'could not load'; listEl.appendChild(li); }
     });

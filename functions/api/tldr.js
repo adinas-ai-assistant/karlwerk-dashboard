@@ -71,7 +71,16 @@ export async function onRequest() {
     })
   );
 
-  return new Response(JSON.stringify(results), {
+  // Merge figmalion + nejm into a single 'other' feed
+  const otherItems = [
+    ...(results.find(r => r.key === 'figmalion')?.items || []),
+    ...(results.find(r => r.key === 'nejm')?.items || []),
+  ];
+  const merged = results
+    .filter(r => r.key !== 'figmalion' && r.key !== 'nejm')
+    .concat({ key: 'other', type: 'essays', items: otherItems });
+
+  return new Response(JSON.stringify(merged), {
     headers: {
       'Content-Type': 'application/json',
       'Cache-Control': 'private, max-age=0, must-revalidate',
