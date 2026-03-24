@@ -8,7 +8,7 @@ const FEEDS = [
   { key: 'design', url: 'https://tldr.tech/api/rss/design', type: 'tldr' },
   { key: 'product', url: 'https://tldr.tech/api/rss/product', type: 'tldr' },
   { key: 'benedict', url: 'https://www.ben-evans.com/benedictevans?format=rss', type: 'essays' },
-  { key: 'figmalion', url: 'https://figmalion.com/feed.atom', type: 'essays' },
+  { key: 'figmalion', url: 'https://figmalion.com/feed.atom', type: 'essays', maxItems: 1 },
   { key: 'nejm', url: 'https://www.nejm.org/action/showFeed?jc=nejm&type=etoc&feed=rss', type: 'essays' },
 ];
 
@@ -24,12 +24,12 @@ function parseTldrItem(xml) {
   };
 }
 
-function parseEssayItems(xml) {
+function parseEssayItems(xml, maxItems = 3) {
   const items = [];
   // Support both RSS (<item>) and Atom (<entry>) formats
   const itemRe = /<(?:item|entry)[^>]*>([\s\S]*?)<\/(?:item|entry)>/g;
   let match;
-  while ((match = itemRe.exec(xml)) !== null && items.length < 3) {
+  while ((match = itemRe.exec(xml)) !== null && items.length < maxItems) {
     const item = match[1];
     const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/);
     // RSS: <link>url</link> — Atom: <link href="url" .../>
@@ -44,11 +44,12 @@ function parseEssayItems(xml) {
 
 export async function onRequest() {
   const results = await Promise.all(
-    FEEDS.map(async ({ key, url, type }) => {
+    FEEDS.map(async (feed) => {
+      const { key, url, type } = feed;
       try {
         const xml = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }).then(r => r.text());
         if (type === 'essays') {
-          return { key, type, items: parseEssayItems(xml) };
+          return { key, type, items: parseEssayItems(xml, feed.maxItems) };
         }
         return { key, type, ...parseTldrItem(xml) };
       } catch {
