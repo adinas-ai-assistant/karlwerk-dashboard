@@ -386,7 +386,14 @@ async function loadNews() {
       a.rel = 'noopener noreferrer';
       a.textContent = story.title; // safe: textContent only
 
+      const comments = document.createElement('a');
+      comments.href = 'https://news.ycombinator.com/item?id=' + story.id;
+      comments.target = '_blank';
+      comments.rel = 'noopener noreferrer';
+      comments.textContent = ' 💬';
+
       li.appendChild(a);
+      li.appendChild(comments);
       list.appendChild(li);
     });
   } catch (e) {
