@@ -290,6 +290,7 @@ const CITIES = [
   { id: 'bajamar',  label: 'bajamar',     lat: 28.5574,  lon: -16.3383,  tz: 'Atlantic/Canary' },
   { id: 'osaka',    label: 'osaka',       lat: 34.6937,  lon: 135.5023,  tz: 'Asia/Tokyo' },
   { id: 'la',       label: 'los angeles', lat: 34.0522,  lon: -118.2437, tz: 'America/Los_Angeles' },
+  { id: 'kampala',  label: 'kampala',     lat: 0.3476,   lon: 32.5825,   tz: 'Africa/Kampala' },
 ];
 
 // Live clock
