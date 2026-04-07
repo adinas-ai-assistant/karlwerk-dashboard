@@ -324,33 +324,61 @@ function uvLabel(uv) {
   return 'extreme';
 }
 
-function fmtTime(iso) {
-  return iso ? iso.slice(11, 16) : '--:--';
+/** Parse wttr.in time strings like "06:26 AM" → "06:26" (24h) */
+function parseWttrTime(t) {
+  if (!t) return '--:--';
+  const [hhmm, period] = t.trim().split(' ');
+  let [h, m] = hhmm.split(':').map(Number);
+  if (period === 'PM' && h !== 12) h += 12;
+  if (period === 'AM' && h === 12) h = 0;
+  return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
+
+/** Map wttr.in weather description → dashboard mode */
+function wttrDescToMode(desc, isDay) {
+  const d = (desc || '').toLowerCase();
+  if (d.includes('thunder') || d.includes('storm')) return 'stormy';
+  if (d.includes('snow') || d.includes('blizzard') || d.includes('sleet') || d.includes('ice')) return 'snowy';
+  if (d.includes('rain') || d.includes('drizzle') || d.includes('shower')) return 'rainy';
+  if (d.includes('fog') || d.includes('mist') || d.includes('haze')) return 'foggy';
+  if (d.includes('overcast')) return 'cloudy';
+  if (d.includes('cloud')) return 'partly_cloudy';
+  return isDay ? 'sunny' : 'partly_cloudy';
 }
 
 async function loadWeather() {
   try {
-    const url = 'https://api.open-meteo.com/v1/forecast' +
-      '?latitude=50.0755&longitude=14.4378' +
-      '&current=temperature_2m,weather_code,is_day,apparent_temperature' +
-      '&daily=sunrise,sunset,uv_index_max,apparent_temperature_max' +
-      '&timezone=Europe%2FPrague&forecast_days=1';
-    const data = await fetch(url).then(r => r.json());
-    const cw = data.current;
-    const daily = data.daily;
+    // wttr.in: free, no key, confirmed CORS-safe
+    const data = await fetch('https://wttr.in/50.0755,14.4378?format=j1').then(r => r.json());
+    const cc   = data.current_condition[0];
+    const day  = data.weather[0];
+    const astro = day.astronomy[0];
 
-    document.getElementById('temp').textContent = Math.round(cw.temperature_2m);
-    document.getElementById('feels').textContent = Math.round(daily.apparent_temperature_max[0]);
-    document.getElementById('sunrise').textContent = fmtTime(daily.sunrise[0]);
-    document.getElementById('sunset').textContent = fmtTime(daily.sunset[0]);
-    const sp = daily.sunset[0].slice(11, 16).split(':');
-    sunsetSeconds = parseInt(sp[0]) * 3600 + parseInt(sp[1]) * 60;
-    const uv = Math.round(daily.uv_index_max[0]);
+    document.getElementById('temp').textContent = Math.round(parseFloat(cc.temp_C));
+    document.getElementById('feels').textContent = Math.round(parseFloat(cc.FeelsLikeC));
+
+    const sunriseStr = parseWttrTime(astro.sunrise);
+    const sunsetStr  = parseWttrTime(astro.sunset);
+    document.getElementById('sunrise').textContent = sunriseStr;
+    document.getElementById('sunset').textContent  = sunsetStr;
+
+    const sp = sunsetStr.split(':').map(Number);
+    sunsetSeconds = sp[0] * 3600 + sp[1] * 60;
+
+    const uv = Math.round(parseFloat(cc.uvIndex || day.uvIndex || 0));
     document.getElementById('uv').textContent = uv;
     document.getElementById('uv-label').textContent = uvLabel(uv);
 
+    // Determine day/night from Prague local time vs sunrise/sunset
+    const nowH = parseInt(new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Prague', hour: '2-digit' }));
+    const srH  = parseInt(sunriseStr.slice(0, 2));
+    const ssH  = parseInt(sunsetStr.slice(0, 2));
+    const isDay = nowH >= srH && nowH < ssH;
+
     const override = document.getElementById('weather-override');
-    if (!override || !override.value) applyWeatherMode(codeToMode(cw.weather_code, cw.is_day));
+    if (!override || !override.value) {
+      applyWeatherMode(wttrDescToMode(cc.weatherDesc[0].value, isDay));
+    }
   } catch (e) {
     console.error('Weather load failed:', e);
   }
@@ -449,14 +477,20 @@ async function loadTldr() {
 async function loadCities() {
   await Promise.all(CITIES.map(async city => {
     try {
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat +
-        '&longitude=' + city.lon + '&current=temperature_2m,weather_code,is_day&forecast_days=1';
-      const data = await fetch(url).then(r => r.json());
-      const cw = data.current;
-      const tempEl = document.getElementById('city-temp-' + city.id);
+      const data = await fetch('https://wttr.in/' + city.lat + ',' + city.lon + '?format=j1').then(r => r.json());
+      const cc = data.current_condition[0];
+      const astro = data.weather[0].astronomy[0];
+      const tempEl  = document.getElementById('city-temp-' + city.id);
       const emojiEl = document.getElementById('city-emoji-' + city.id);
-      if (tempEl) tempEl.textContent = Math.round(cw.temperature_2m) + '°';
-      if (emojiEl) emojiEl.textContent = codeToEmoji(cw.weather_code, cw.is_day);
+      if (tempEl) tempEl.textContent = Math.round(parseFloat(cc.temp_C)) + '°';
+      if (emojiEl) {
+        const nowH = parseInt(new Date().toLocaleTimeString('en-GB', { timeZone: city.tz, hour: '2-digit' }));
+        const srH  = parseInt(parseWttrTime(astro.sunrise).slice(0, 2));
+        const ssH  = parseInt(parseWttrTime(astro.sunset).slice(0, 2));
+        const isDay = nowH >= srH && nowH < ssH;
+        const mode = wttrDescToMode(cc.weatherDesc[0].value, isDay);
+        emojiEl.textContent = (WEATHER_MODES[mode] || WEATHER_MODES.rainy).icon;
+      }
     } catch (e) {}
   }));
 }
