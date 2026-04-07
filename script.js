@@ -346,41 +346,67 @@ function wttrDescToMode(desc, isDay) {
   return isDay ? 'sunny' : 'partly_cloudy';
 }
 
+async function loadWeatherFromOpenMeteo() {
+  const url = 'https://api.open-meteo.com/v1/forecast' +
+    '?latitude=50.0755&longitude=14.4378' +
+    '&current=temperature_2m,weather_code,is_day,apparent_temperature' +
+    '&daily=sunrise,sunset,uv_index_max,apparent_temperature_max' +
+    '&timezone=Europe%2FPrague&forecast_days=1';
+  const data = await fetch(url, { signal: AbortSignal.timeout(5000) }).then(r => r.json());
+  const cw = data.current;
+  if (!cw || cw.temperature_2m == null) throw new Error('no data');
+  const daily = data.daily;
+
+  document.getElementById('temp').textContent = Math.round(cw.temperature_2m);
+  document.getElementById('feels').textContent = Math.round(daily.apparent_temperature_max[0]);
+
+  const fmtTime = iso => iso ? iso.slice(11, 16) : '--:--';
+  document.getElementById('sunrise').textContent = fmtTime(daily.sunrise[0]);
+  document.getElementById('sunset').textContent  = fmtTime(daily.sunset[0]);
+  const sp = daily.sunset[0].slice(11, 16).split(':');
+  sunsetSeconds = parseInt(sp[0]) * 3600 + parseInt(sp[1]) * 60;
+
+  const uv = Math.round(daily.uv_index_max[0]);
+  document.getElementById('uv').textContent = uv;
+  document.getElementById('uv-label').textContent = uvLabel(uv);
+
+  const override = document.getElementById('weather-override');
+  if (!override || !override.value) applyWeatherMode(codeToMode(cw.weather_code, cw.is_day));
+}
+
+async function loadWeatherFromWttr() {
+  const data = await fetch('https://wttr.in/50.0755,14.4378?format=j1').then(r => r.json());
+  const cc    = data.current_condition[0];
+  const day   = data.weather[0];
+  const astro = day.astronomy[0];
+
+  document.getElementById('temp').textContent = Math.round(parseFloat(cc.temp_C));
+  document.getElementById('feels').textContent = Math.round(parseFloat(cc.FeelsLikeC));
+
+  const sunriseStr = parseWttrTime(astro.sunrise);
+  const sunsetStr  = parseWttrTime(astro.sunset);
+  document.getElementById('sunrise').textContent = sunriseStr;
+  document.getElementById('sunset').textContent  = sunsetStr;
+
+  const sp = sunsetStr.split(':').map(Number);
+  sunsetSeconds = sp[0] * 3600 + sp[1] * 60;
+
+  const uv = Math.round(parseFloat(cc.uvIndex || day.uvIndex || 0));
+  document.getElementById('uv').textContent = uv;
+  document.getElementById('uv-label').textContent = uvLabel(uv);
+
+  const nowH = parseInt(new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Prague', hour: '2-digit' }));
+  const isDay = nowH >= parseInt(sunriseStr) && nowH < parseInt(sunsetStr);
+  const override = document.getElementById('weather-override');
+  if (!override || !override.value) applyWeatherMode(wttrDescToMode(cc.weatherDesc[0].value, isDay));
+}
+
 async function loadWeather() {
   try {
-    // wttr.in: free, no key, confirmed CORS-safe
-    const data = await fetch('https://wttr.in/50.0755,14.4378?format=j1').then(r => r.json());
-    const cc   = data.current_condition[0];
-    const day  = data.weather[0];
-    const astro = day.astronomy[0];
-
-    document.getElementById('temp').textContent = Math.round(parseFloat(cc.temp_C));
-    document.getElementById('feels').textContent = Math.round(parseFloat(cc.FeelsLikeC));
-
-    const sunriseStr = parseWttrTime(astro.sunrise);
-    const sunsetStr  = parseWttrTime(astro.sunset);
-    document.getElementById('sunrise').textContent = sunriseStr;
-    document.getElementById('sunset').textContent  = sunsetStr;
-
-    const sp = sunsetStr.split(':').map(Number);
-    sunsetSeconds = sp[0] * 3600 + sp[1] * 60;
-
-    const uv = Math.round(parseFloat(cc.uvIndex || day.uvIndex || 0));
-    document.getElementById('uv').textContent = uv;
-    document.getElementById('uv-label').textContent = uvLabel(uv);
-
-    // Determine day/night from Prague local time vs sunrise/sunset
-    const nowH = parseInt(new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Prague', hour: '2-digit' }));
-    const srH  = parseInt(sunriseStr.slice(0, 2));
-    const ssH  = parseInt(sunsetStr.slice(0, 2));
-    const isDay = nowH >= srH && nowH < ssH;
-
-    const override = document.getElementById('weather-override');
-    if (!override || !override.value) {
-      applyWeatherMode(wttrDescToMode(cc.weatherDesc[0].value, isDay));
-    }
+    await loadWeatherFromOpenMeteo();
   } catch (e) {
-    console.error('Weather load failed:', e);
+    console.warn('Open-Meteo unavailable, falling back to wttr.in:', e.message);
+    try { await loadWeatherFromWttr(); } catch (e2) { console.error('Weather load failed:', e2); }
   }
 }
 
@@ -476,22 +502,33 @@ async function loadTldr() {
 
 async function loadCities() {
   await Promise.all(CITIES.map(async city => {
+    const tempEl  = document.getElementById('city-temp-' + city.id);
+    const emojiEl = document.getElementById('city-emoji-' + city.id);
     try {
-      const data = await fetch('https://wttr.in/' + city.lat + ',' + city.lon + '?format=j1').then(r => r.json());
-      const cc = data.current_condition[0];
-      const astro = data.weather[0].astronomy[0];
-      const tempEl  = document.getElementById('city-temp-' + city.id);
-      const emojiEl = document.getElementById('city-emoji-' + city.id);
-      if (tempEl) tempEl.textContent = Math.round(parseFloat(cc.temp_C)) + '°';
-      if (emojiEl) {
-        const nowH = parseInt(new Date().toLocaleTimeString('en-GB', { timeZone: city.tz, hour: '2-digit' }));
-        const srH  = parseInt(parseWttrTime(astro.sunrise).slice(0, 2));
-        const ssH  = parseInt(parseWttrTime(astro.sunset).slice(0, 2));
-        const isDay = nowH >= srH && nowH < ssH;
-        const mode = wttrDescToMode(cc.weatherDesc[0].value, isDay);
-        emojiEl.textContent = (WEATHER_MODES[mode] || WEATHER_MODES.rainy).icon;
-      }
-    } catch (e) {}
+      // Try Open-Meteo first
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat +
+        '&longitude=' + city.lon + '&current=temperature_2m,weather_code,is_day&forecast_days=1';
+      const data = await fetch(url, { signal: AbortSignal.timeout(5000) }).then(r => r.json());
+      const cw = data.current;
+      if (!cw || cw.temperature_2m == null) throw new Error('no data');
+      if (tempEl) tempEl.textContent = Math.round(cw.temperature_2m) + '°';
+      if (emojiEl) emojiEl.textContent = codeToEmoji(cw.weather_code, cw.is_day);
+    } catch (e) {
+      try {
+        // Fall back to wttr.in
+        const data = await fetch('https://wttr.in/' + city.lat + ',' + city.lon + '?format=j1').then(r => r.json());
+        const cc = data.current_condition[0];
+        const astro = data.weather[0].astronomy[0];
+        if (tempEl) tempEl.textContent = Math.round(parseFloat(cc.temp_C)) + '°';
+        if (emojiEl) {
+          const nowH = parseInt(new Date().toLocaleTimeString('en-GB', { timeZone: city.tz, hour: '2-digit' }));
+          const srH  = parseInt(parseWttrTime(astro.sunrise).slice(0, 2));
+          const ssH  = parseInt(parseWttrTime(astro.sunset).slice(0, 2));
+          const mode = wttrDescToMode(cc.weatherDesc[0].value, nowH >= srH && nowH < ssH);
+          emojiEl.textContent = (WEATHER_MODES[mode] || WEATHER_MODES.rainy).icon;
+        }
+      } catch (e2) {}
+    }
   }));
 }
 
