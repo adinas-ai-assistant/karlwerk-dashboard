@@ -332,14 +332,14 @@ async function loadWeather() {
   try {
     const url = 'https://api.open-meteo.com/v1/forecast' +
       '?latitude=50.0755&longitude=14.4378' +
-      '&current_weather=true' +
+      '&current=temperature_2m,weather_code,is_day,apparent_temperature' +
       '&daily=sunrise,sunset,uv_index_max,apparent_temperature_max' +
       '&timezone=Europe%2FPrague&forecast_days=1';
     const data = await fetch(url).then(r => r.json());
-    const cw = data.current_weather;
+    const cw = data.current;
     const daily = data.daily;
 
-    document.getElementById('temp').textContent = Math.round(cw.temperature);
+    document.getElementById('temp').textContent = Math.round(cw.temperature_2m);
     document.getElementById('feels').textContent = Math.round(daily.apparent_temperature_max[0]);
     document.getElementById('sunrise').textContent = fmtTime(daily.sunrise[0]);
     document.getElementById('sunset').textContent = fmtTime(daily.sunset[0]);
@@ -350,7 +350,7 @@ async function loadWeather() {
     document.getElementById('uv-label').textContent = uvLabel(uv);
 
     const override = document.getElementById('weather-override');
-    if (!override || !override.value) applyWeatherMode(codeToMode(cw.weathercode, cw.is_day));
+    if (!override || !override.value) applyWeatherMode(codeToMode(cw.weather_code, cw.is_day));
   } catch (e) {
     console.error('Weather load failed:', e);
   }
@@ -450,13 +450,13 @@ async function loadCities() {
   await Promise.all(CITIES.map(async city => {
     try {
       const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat +
-        '&longitude=' + city.lon + '&current_weather=true&forecast_days=1';
+        '&longitude=' + city.lon + '&current=temperature_2m,weather_code,is_day&forecast_days=1';
       const data = await fetch(url).then(r => r.json());
-      const cw = data.current_weather;
+      const cw = data.current;
       const tempEl = document.getElementById('city-temp-' + city.id);
       const emojiEl = document.getElementById('city-emoji-' + city.id);
-      if (tempEl) tempEl.textContent = Math.round(cw.temperature) + '°';
-      if (emojiEl) emojiEl.textContent = codeToEmoji(cw.weathercode, cw.is_day);
+      if (tempEl) tempEl.textContent = Math.round(cw.temperature_2m) + '°';
+      if (emojiEl) emojiEl.textContent = codeToEmoji(cw.weather_code, cw.is_day);
     } catch (e) {}
   }));
 }
