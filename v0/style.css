@@ -1,0 +1,369 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #1a1a1a;
+  --surface: #212121;
+  --border: #2e2e2e;
+  --text: #dcdcdc;
+  --muted: #888;
+  --amber: #d4b07a;
+  --yellow: #ddd088;
+  --peach: #dbb8ac;
+  --green: #8abf9a;
+  --blue: #9dd8ee;
+  --blue-visited: #baaed8;
+  --blue-hover: #c4ecf8;
+  --neon: #00ffcc;
+  --neon-dim: #00ccaa;
+  --neon-glow: rgba(0, 255, 200, 0.55);
+  --neon-glow-soft: rgba(0, 255, 200, 0.2);
+}
+
+html, body {
+  min-height: 100vh;
+  background: #101620;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+#rain-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── weather-based backgrounds (preserved from v0 default) ── */
+body { transition: background 1.5s ease; }
+
+body[data-weather="sunny"] .block,
+body[data-weather="partly_cloudy"] .block,
+body[data-weather="foggy"] .block {
+  background: rgba(8, 14, 28, 0.58);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ── layout ── */
+
+main {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+header {
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+/* ── neon headings — Space Mono + teal glow ── */
+
+#date {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--neon-dim);
+  text-shadow: 0 0 8px var(--neon-glow-soft);
+}
+
+#clock {
+  font-family: 'Space Mono', monospace;
+  font-size: 2.2rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: var(--neon);
+  text-shadow: 0 0 12px var(--neon-glow), 0 0 28px var(--neon-glow-soft);
+  margin-top: 0;
+}
+
+.clock-seconds {
+  color: var(--neon-dim);
+  opacity: 0.7;
+}
+
+.block {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: background 1.5s ease, border-color 1.5s ease;
+}
+
+.block-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--neon);
+  text-shadow: 0 0 8px var(--neon-glow), 0 0 18px var(--neon-glow-soft);
+  margin-bottom: 1rem;
+}
+
+.block-label a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.block-label a:hover {
+  color: #80ffe8;
+  text-shadow: 0 0 12px var(--neon-glow);
+}
+
+/* ── weather block ── */
+
+.weather-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.weather-info { flex: 1; min-width: 0; overflow: hidden; }
+
+.weather-icon {
+  flex-shrink: 0;
+  font-size: 3.2rem;
+  line-height: 1;
+  margin-top: 0.1rem;
+  font-variant-emoji: emoji;
+}
+
+.weather-temp {
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.unit {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin-left: 0.2rem;
+}
+
+.weather-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.weather-row {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--amber);
+  overflow: hidden;
+}
+
+.weather-row > span { white-space: nowrap; }
+.weather-row span span { color: var(--text); }
+
+.sunrise-icon, .sunset-icon { display: inline-block; vertical-align: middle; margin-right: 0.3rem; }
+
+.uv-label {
+  font-size: 0.7rem;
+  color: var(--green);
+  letter-spacing: 0.08em;
+}
+
+/* ── sunset alert ── */
+
+.sunset-alert {
+  border: none !important;
+  background:
+    radial-gradient(ellipse at 50% 115%, rgba(215, 140, 90, 0.28) 0%, rgba(215, 140, 90, 0) 45%),
+    radial-gradient(ellipse at 50% 40%, rgba(160, 110, 200, 0.22) 20%, rgba(160, 110, 200, 0) 80%),
+    rgba(255, 255, 255, 0.03) !important;
+}
+.sunset-alert .block-label { color: var(--peach); text-shadow: none; }
+.sunset-countdown { font-size: 1.5rem; font-weight: 300; color: var(--peach); letter-spacing: 0.04em; margin-top: 0.3rem; }
+.sunset-sub { font-size: 0.75rem; color: var(--peach); opacity: 0.75; margin-top: 0.3rem; }
+
+/* ── cities ── */
+
+.cities-list { display: flex; flex-direction: column; gap: 0.55rem; }
+
+.city-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-size: 0.92rem;
+}
+
+.city-name { flex: 1; letter-spacing: 0.05em; }
+.city-time { opacity: 0.75; }
+.city-temp { min-width: 3.2rem; text-align: right; font-weight: 400; }
+.city-emoji { font-size: 1rem; margin-left: 0.4rem; }
+
+[data-city="bajamar"] { color: #c9a96e; }
+[data-city="osaka"]   { color: #c498b0; }
+[data-city="la"]      { color: #8aaa82; }
+
+/* ── news / feed lists ── */
+
+#news-list,
+#tldr-simon-list,
+#tldr-other-list,
+#tldr-tech-list,
+#tldr-ai-list,
+#tldr-devops-list,
+#tldr-infosec-list,
+#tldr-fintech-list,
+#tldr-marketing-list,
+#tldr-design-list,
+#tldr-product-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+#news-list li,
+#tldr-simon-list li,
+#tldr-other-list li,
+#tldr-tech-list li,
+#tldr-ai-list li,
+#tldr-devops-list li,
+#tldr-infosec-list li,
+#tldr-fintech-list li,
+#tldr-marketing-list li,
+#tldr-design-list li,
+#tldr-product-list li { font-size: 0.92rem; line-height: 1.6; }
+
+#news-list li.loading,
+#tldr-simon-list li.loading,
+#tldr-other-list li.loading,
+#tldr-tech-list li.loading,
+#tldr-ai-list li.loading,
+#tldr-devops-list li.loading,
+#tldr-infosec-list li.loading,
+#tldr-fintech-list li.loading,
+#tldr-marketing-list li.loading,
+#tldr-design-list li.loading,
+#tldr-product-list li.loading { color: var(--muted); }
+
+#news-list a,
+#tldr-simon-list a,
+#tldr-other-list a,
+#tldr-tech-list a,
+#tldr-ai-list a,
+#tldr-devops-list a,
+#tldr-infosec-list a,
+#tldr-fintech-list a,
+#tldr-marketing-list a,
+#tldr-design-list a,
+#tldr-product-list a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+#news-list a:visited,
+#tldr-simon-list a:visited,
+#tldr-other-list a:visited,
+#tldr-tech-list a:visited,
+#tldr-ai-list a:visited,
+#tldr-devops-list a:visited,
+#tldr-infosec-list a:visited,
+#tldr-fintech-list a:visited,
+#tldr-marketing-list a:visited,
+#tldr-design-list a:visited,
+#tldr-product-list a:visited { color: var(--blue-visited); }
+
+#news-list a:hover,
+#tldr-simon-list a:hover,
+#tldr-other-list a:hover,
+#tldr-tech-list a:hover,
+#tldr-ai-list a:hover,
+#tldr-devops-list a:hover,
+#tldr-infosec-list a:hover,
+#tldr-fintech-list a:hover,
+#tldr-marketing-list a:hover,
+#tldr-design-list a:hover,
+#tldr-product-list a:hover {
+  color: var(--blue-hover);
+  text-decoration: underline;
+}
+
+/* ── feed grid (mobile: stacked) ── */
+
+.feed-grid { display: contents; }
+
+/* ── desktop grid layout ── */
+
+@media (min-width: 1100px) {
+  main {
+    max-width: 1440px;
+    padding: 3rem 3rem;
+  }
+
+  header {
+    margin-bottom: 2rem;
+    gap: 2rem;
+  }
+
+  #clock {
+    font-size: 2.8rem;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .sidebar .block {
+    margin-bottom: 1.5rem;
+  }
+
+  .feed-area {
+    min-width: 0;
+  }
+
+  #news-block {
+    margin-bottom: 1.5rem;
+  }
+
+  .feed-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .feed-grid .block {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 1099px) {
+  .layout { display: block; }
+  .sidebar { display: block; }
+  .feed-area { display: block; }
+  .feed-grid { display: contents; }
+}
