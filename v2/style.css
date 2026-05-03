@@ -1,0 +1,550 @@
+/* ===========================================================
+   80s SCI-FI / SYNTHWAVE DASHBOARD
+   Inspired by Tron, Blade Runner, WarGames
+   =========================================================== */
+
+:root {
+  --bg: #05050f;
+  --bg-block: rgba(0, 0, 20, 0.75);
+  --cyan: #00e5ff;
+  --magenta: #ff006e;
+  --purple: #8b5cf6;
+  --yellow: #ffdd00;
+  --green: #39ff14;
+  --grid: rgba(0, 229, 255, 0.15);
+  --border-cyan: rgba(0, 229, 255, 0.6);
+  --glow-cyan: 0 0 12px rgba(0, 229, 255, 0.35), inset 0 0 12px rgba(0, 229, 255, 0.05);
+  --glow-magenta: 0 0 10px #ff006e, 0 0 20px rgba(255, 0, 110, 0.5);
+  --font-display: 'Orbitron', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(139, 92, 246, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 0, 110, 0.18) 0%, transparent 55%),
+    linear-gradient(180deg, #05050f 0%, #08081a 50%, #0a0520 100%);
+  position: relative;
+}
+
+/* horizontal scanline overlay (subtle, doesn't impact contrast) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 229, 255, 0.03) 0px,
+    rgba(0, 229, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* perspective grid floor */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50vh;
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.15) 1px, transparent 1px);
+  background-size: 40px 40px;
+  transform: perspective(500px) rotateX(60deg);
+  transform-origin: bottom;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%);
+}
+
+/* hide rain canvas - this is a synthwave grid theme */
+#rain-canvas {
+  display: none !important;
+}
+
+main {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+/* ============ HEADER ============ */
+header {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0 8px;
+  text-align: center;
+  position: relative;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--magenta) 30%,
+    var(--cyan) 50%,
+    var(--magenta) 70%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+#date {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.78rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  text-shadow: 0 0 8px rgba(255, 0, 110, 0.6);
+  margin-bottom: 6px;
+}
+
+#clock {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 4.2rem;
+  letter-spacing: 0.06em;
+  color: var(--cyan);
+  text-shadow:
+    0 0 15px var(--cyan),
+    0 0 30px rgba(0, 229, 255, 0.5),
+    0 2px 0 rgba(255, 0, 110, 0.4);
+  line-height: 1;
+}
+
+/* ============ BLOCKS ============ */
+.block {
+  position: relative;
+  background: var(--bg-block);
+  border: 1px solid var(--border-cyan);
+  box-shadow: var(--glow-cyan);
+  padding: 16px 18px;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.block:hover {
+  box-shadow:
+    0 0 18px rgba(0, 229, 255, 0.5),
+    inset 0 0 20px rgba(0, 229, 255, 0.08);
+  border-color: var(--cyan);
+}
+
+/* corner notches for sci-fi feel */
+.block::before,
+.block::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--magenta);
+  pointer-events: none;
+}
+
+.block::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.block::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+.block-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  text-shadow: var(--glow-magenta);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(255, 0, 110, 0.3);
+}
+
+.block-label a {
+  color: var(--magenta);
+  text-decoration: none;
+  text-shadow: var(--glow-magenta);
+}
+
+.block-label a:hover {
+  color: #fff;
+  text-shadow: 0 0 12px #ff006e, 0 0 24px #ff006e;
+}
+
+/* ============ WEATHER ============ */
+.weather-body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.weather-info {
+  flex: 1;
+}
+
+.weather-temp {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.8rem;
+  color: var(--cyan);
+  text-shadow: 0 0 14px var(--cyan), 0 0 28px rgba(0, 229, 255, 0.45);
+  line-height: 1;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.weather-temp .unit {
+  font-size: 1.3rem;
+  margin-left: 2px;
+  margin-top: 4px;
+  color: var(--magenta);
+  text-shadow: 0 0 8px var(--magenta);
+}
+
+.weather-meta {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--cyan);
+  opacity: 0.85;
+}
+
+.weather-row {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 0.85rem;
+  color: var(--cyan);
+}
+
+.weather-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sunrise-icon {
+  color: var(--yellow);
+  filter: drop-shadow(0 0 4px var(--yellow));
+}
+
+.sunset-icon {
+  color: var(--magenta);
+  filter: drop-shadow(0 0 4px var(--magenta));
+}
+
+.uv-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  opacity: 0.9;
+}
+
+.weather-icon {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.6));
+}
+
+/* ============ SUNSET ALERT ============ */
+.sunset-alert {
+  border-color: var(--magenta);
+  box-shadow:
+    0 0 18px rgba(255, 0, 110, 0.4),
+    inset 0 0 20px rgba(255, 0, 110, 0.08);
+  background:
+    linear-gradient(135deg, rgba(255, 0, 110, 0.08) 0%, rgba(255, 221, 0, 0.04) 100%),
+    var(--bg-block);
+}
+
+.sunset-alert::before,
+.sunset-alert::after {
+  border-color: var(--yellow);
+}
+
+.sunset-countdown {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: var(--yellow);
+  text-shadow: 0 0 14px var(--yellow), 0 0 28px rgba(255, 221, 0, 0.45);
+  letter-spacing: 0.05em;
+}
+
+.sunset-sub {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--magenta);
+  text-shadow: 0 0 6px rgba(255, 0, 110, 0.5);
+}
+
+/* ============ CITIES ============ */
+.cities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.city-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 8px;
+  border-left: 2px solid transparent;
+  background: rgba(0, 229, 255, 0.025);
+  font-size: 0.95rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.city-row:hover {
+  background: rgba(0, 229, 255, 0.07);
+}
+
+.city-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.city-time {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.city-temp {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.city-emoji {
+  font-size: 1.05rem;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+/* per-city neon colors */
+.city-row[data-city="bajamar"] {
+  color: var(--yellow);
+  border-left-color: var(--yellow);
+  text-shadow: 0 0 6px rgba(255, 221, 0, 0.5);
+}
+.city-row[data-city="bajamar"]:hover {
+  background: rgba(255, 221, 0, 0.08);
+  box-shadow: inset 0 0 12px rgba(255, 221, 0, 0.1);
+}
+
+.city-row[data-city="osaka"] {
+  color: var(--magenta);
+  border-left-color: var(--magenta);
+  text-shadow: 0 0 6px rgba(255, 0, 110, 0.55);
+}
+.city-row[data-city="osaka"]:hover {
+  background: rgba(255, 0, 110, 0.08);
+  box-shadow: inset 0 0 12px rgba(255, 0, 110, 0.1);
+}
+
+.city-row[data-city="la"] {
+  color: var(--cyan);
+  border-left-color: var(--cyan);
+  text-shadow: 0 0 6px rgba(0, 229, 255, 0.55);
+}
+.city-row[data-city="la"]:hover {
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: inset 0 0 12px rgba(0, 229, 255, 0.1);
+}
+
+.city-row[data-city="kampala"] {
+  color: var(--green);
+  border-left-color: var(--green);
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+}
+.city-row[data-city="kampala"]:hover {
+  background: rgba(57, 255, 20, 0.08);
+  box-shadow: inset 0 0 12px rgba(57, 255, 20, 0.12);
+}
+
+/* ============ NEWS / TLDR LISTS ============ */
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+li {
+  position: relative;
+  padding: 4px 0 4px 16px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  color: var(--magenta);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-shadow: 0 0 6px var(--magenta);
+}
+
+li.loading {
+  color: var(--magenta);
+  font-style: italic;
+  opacity: 0.7;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+li.loading::before {
+  content: '...';
+  letter-spacing: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ============ LINKS ============ */
+a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: color 0.15s, text-shadow 0.15s;
+  border-bottom: 1px dotted rgba(0, 229, 255, 0.3);
+}
+
+a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--cyan), 0 0 16px var(--cyan);
+  border-bottom-color: #fff;
+}
+
+a:visited {
+  color: var(--purple);
+  border-bottom-color: rgba(139, 92, 246, 0.3);
+}
+
+a:visited:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--purple), 0 0 16px var(--purple);
+}
+
+li a {
+  border-bottom: none;
+}
+
+li a:hover {
+  text-shadow: 0 0 8px var(--cyan);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 720px) {
+  main {
+    grid-template-columns: 1fr;
+    padding: 20px 14px 60px;
+    gap: 14px;
+  }
+
+  #clock {
+    font-size: 3rem;
+  }
+
+  #date {
+    font-size: 0.7rem;
+  }
+
+  .weather-temp {
+    font-size: 2.3rem;
+  }
+
+  .weather-icon {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 420px) {
+  #clock {
+    font-size: 2.4rem;
+  }
+
+  .weather-row {
+    gap: 10px;
+    font-size: 0.78rem;
+  }
+
+  .city-row {
+    grid-template-columns: 1fr auto auto auto;
+    gap: 8px;
+    font-size: 0.85rem;
+  }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
