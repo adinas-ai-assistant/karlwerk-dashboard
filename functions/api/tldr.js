@@ -7,7 +7,6 @@ const FEEDS = [
   { key: 'marketing', url: 'https://tldr.tech/api/rss/marketing', type: 'tldr' },
   { key: 'design', url: 'https://tldr.tech/api/rss/design', type: 'tldr' },
   { key: 'product', url: 'https://tldr.tech/api/rss/product', type: 'tldr' },
-  { key: 'benedict', url: 'https://www.ben-evans.com/benedictevans?format=rss', type: 'essays' },
   { key: 'simon', url: 'https://simonwillison.net/atom/everything/', type: 'essays' },
   { key: 'figmalion', url: 'https://figmalion.com/feed.atom', type: 'essays', maxItems: 1 },
   { key: 'nejm', url: 'https://www.nejm.org/action/showFeed?jc=ai&type=etoc&feed=rss', type: 'nejm-ai' },
