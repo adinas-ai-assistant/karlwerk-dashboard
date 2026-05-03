@@ -13,10 +13,10 @@
   --blue: #9dd8ee;
   --blue-visited: #baaed8;
   --blue-hover: #c4ecf8;
-  --neon: #00ffcc;
-  --neon-dim: #00ccaa;
-  --neon-glow: rgba(0, 255, 200, 0.55);
-  --neon-glow-soft: rgba(0, 255, 200, 0.2);
+  --neon: #ff6eb4;
+  --neon-dim: #ff9ed4;
+  --neon-glow: rgba(255, 110, 180, 0.6);
+  --neon-glow-soft: rgba(255, 110, 180, 0.22);
 }
 
 html, body {
@@ -126,7 +126,7 @@ header {
 }
 
 .block-label a:hover {
-  color: #80ffe8;
+  color: #ffb3d9;
   text-shadow: 0 0 12px var(--neon-glow);
 }
 
