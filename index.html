@@ -8,8 +8,8 @@
   <title>dashboard · karlwerk</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=34">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=35">
 </head>
 <body>
   <canvas id="rain-canvas"></canvas>
@@ -19,136 +19,142 @@
       <div id="clock"></div>
     </header>
 
-    <section class="block" id="weather-block">
-      <div class="block-label">prague</div>
-      <div class="weather-body">
-        <div class="weather-info">
-          <div class="weather-temp"><span id="temp">--</span><span class="unit">°C</span></div>
-          <div class="weather-meta">
-            <span>feels like <span id="feels">--</span>°C</span>
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="block" id="weather-block">
+          <div class="block-label">prague</div>
+          <div class="weather-body">
+            <div class="weather-info">
+              <div class="weather-temp"><span id="temp">--</span><span class="unit">°C</span></div>
+              <div class="weather-meta">
+                <span>feels like <span id="feels">--</span>°C</span>
+              </div>
+              <div class="weather-row">
+                <span>
+                  <svg class="sunrise-icon" width="13" height="16" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="0.5" y1="8" x2="15.5" y2="8"/>
+                    <path d="M5.5 8 A3 3 0 1 1 10.5 8"/>
+                    <line x1="8" y1="2.8" x2="8" y2="1.5"/>
+                    <line x1="5.5" y1="3.9" x2="4.5" y2="2.9"/>
+                    <line x1="10.5" y1="3.9" x2="11.5" y2="2.9"/>
+                    <line x1="8" y1="15.5" x2="8" y2="11.5"/>
+                    <polyline points="6.5,13 8,11.5 9.5,13"/>
+                  </svg><span id="sunrise">--:--</span>
+                </span>
+                <span>
+                  <svg class="sunset-icon" width="13" height="16" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="0.5" y1="8" x2="15.5" y2="8"/>
+                    <path d="M5.5 8 A3 3 0 1 1 10.5 8"/>
+                    <line x1="8" y1="2.8" x2="8" y2="1.5"/>
+                    <line x1="5.5" y1="3.9" x2="4.5" y2="2.9"/>
+                    <line x1="10.5" y1="3.9" x2="11.5" y2="2.9"/>
+                    <line x1="8" y1="11.5" x2="8" y2="15.5"/>
+                    <polyline points="6.5,14 8,15.5 9.5,14"/>
+                  </svg><span id="sunset">--:--</span>
+                </span>
+                <span>UV <span id="uv">--</span> <span id="uv-label" class="uv-label"></span></span>
+              </div>
+            </div>
+            <div class="weather-icon" id="weather-icon"></div>
           </div>
-          <div class="weather-row">
-            <span>
-              <svg class="sunrise-icon" width="13" height="16" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="0.5" y1="8" x2="15.5" y2="8"/>
-                <path d="M5.5 8 A3 3 0 1 1 10.5 8"/>
-                <line x1="8" y1="2.8" x2="8" y2="1.5"/>
-                <line x1="5.5" y1="3.9" x2="4.5" y2="2.9"/>
-                <line x1="10.5" y1="3.9" x2="11.5" y2="2.9"/>
-                <line x1="8" y1="15.5" x2="8" y2="11.5"/>
-                <polyline points="6.5,13 8,11.5 9.5,13"/>
-              </svg><span id="sunrise">--:--</span>
-            </span>
-            <span>
-              <svg class="sunset-icon" width="13" height="16" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="0.5" y1="8" x2="15.5" y2="8"/>
-                <path d="M5.5 8 A3 3 0 1 1 10.5 8"/>
-                <line x1="8" y1="2.8" x2="8" y2="1.5"/>
-                <line x1="5.5" y1="3.9" x2="4.5" y2="2.9"/>
-                <line x1="10.5" y1="3.9" x2="11.5" y2="2.9"/>
-                <line x1="8" y1="11.5" x2="8" y2="15.5"/>
-                <polyline points="6.5,14 8,15.5 9.5,14"/>
-              </svg><span id="sunset">--:--</span>
-            </span>
-            <span>UV <span id="uv">--</span> <span id="uv-label" class="uv-label"></span></span>
+        </section>
+
+        <section class="block sunset-alert" id="sunset-alert-block" style="display:none">
+          <div class="block-label">🌅 golden hour</div>
+          <div class="sunset-countdown" id="sunset-countdown">--:--</div>
+          <div class="sunset-sub" id="sunset-sub"></div>
+        </section>
+
+        <section class="block" id="cities-block">
+          <div class="block-label">world</div>
+          <div class="cities-list">
+            <div class="city-row" data-city="bajamar">
+              <span class="city-name">bajamar</span>
+              <span class="city-time" id="city-time-bajamar">--:--</span>
+              <span class="city-temp" id="city-temp-bajamar">--°</span>
+              <span class="city-emoji" id="city-emoji-bajamar"></span>
+            </div>
+            <div class="city-row" data-city="osaka">
+              <span class="city-name">osaka</span>
+              <span class="city-time" id="city-time-osaka">--:--</span>
+              <span class="city-temp" id="city-temp-osaka">--°</span>
+              <span class="city-emoji" id="city-emoji-osaka"></span>
+            </div>
+            <div class="city-row" data-city="la">
+              <span class="city-name">los angeles</span>
+              <span class="city-time" id="city-time-la">--:--</span>
+              <span class="city-temp" id="city-temp-la">--°</span>
+              <span class="city-emoji" id="city-emoji-la"></span>
+            </div>
+            <div class="city-row" data-city="kampala">
+              <span class="city-name">kampala</span>
+              <span class="city-time" id="city-time-kampala">--:--</span>
+              <span class="city-temp" id="city-temp-kampala">--°</span>
+              <span class="city-emoji" id="city-emoji-kampala"></span>
+            </div>
           </div>
+        </section>
+      </aside>
+
+      <div class="feed-area">
+        <section class="block" id="news-block">
+          <div class="block-label"><a href="https://news.ycombinator.com" target="_blank" rel="noopener noreferrer">hacker news</a></div>
+          <ul id="news-list"><li class="loading">loading...</li></ul>
+        </section>
+
+        <div class="feed-grid">
+          <section class="block" id="tldr-simon-block">
+            <div class="block-label"><a href="https://simonwillison.net" target="_blank" rel="noopener noreferrer">simon willison</a></div>
+            <ul id="tldr-simon-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-other-block">
+            <div class="block-label">other</div>
+            <ul id="tldr-other-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-tech-block">
+            <div class="block-label">tldr tech</div>
+            <ul id="tldr-tech-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-ai-block">
+            <div class="block-label">tldr ai</div>
+            <ul id="tldr-ai-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-design-block">
+            <div class="block-label">tldr design</div>
+            <ul id="tldr-design-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-product-block">
+            <div class="block-label">tldr product</div>
+            <ul id="tldr-product-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-infosec-block">
+            <div class="block-label">tldr infosec</div>
+            <ul id="tldr-infosec-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-fintech-block">
+            <div class="block-label">tldr fintech</div>
+            <ul id="tldr-fintech-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-devops-block">
+            <div class="block-label">tldr devops</div>
+            <ul id="tldr-devops-list"><li class="loading">loading...</li></ul>
+          </section>
+
+          <section class="block" id="tldr-marketing-block">
+            <div class="block-label">tldr marketing</div>
+            <ul id="tldr-marketing-list"><li class="loading">loading...</li></ul>
+          </section>
         </div>
-        <div class="weather-icon" id="weather-icon"></div>
       </div>
-    </section>
-
-    <section class="block sunset-alert" id="sunset-alert-block" style="display:none">
-      <div class="block-label">🌅 golden hour</div>
-      <div class="sunset-countdown" id="sunset-countdown">--:--</div>
-      <div class="sunset-sub" id="sunset-sub"></div>
-    </section>
-
-    <section class="block" id="cities-block">
-      <div class="block-label">world</div>
-      <div class="cities-list">
-        <div class="city-row" data-city="bajamar">
-          <span class="city-name">bajamar</span>
-          <span class="city-time" id="city-time-bajamar">--:--</span>
-          <span class="city-temp" id="city-temp-bajamar">--°</span>
-          <span class="city-emoji" id="city-emoji-bajamar"></span>
-        </div>
-        <div class="city-row" data-city="osaka">
-          <span class="city-name">osaka</span>
-          <span class="city-time" id="city-time-osaka">--:--</span>
-          <span class="city-temp" id="city-temp-osaka">--°</span>
-          <span class="city-emoji" id="city-emoji-osaka"></span>
-        </div>
-        <div class="city-row" data-city="la">
-          <span class="city-name">los angeles</span>
-          <span class="city-time" id="city-time-la">--:--</span>
-          <span class="city-temp" id="city-temp-la">--°</span>
-          <span class="city-emoji" id="city-emoji-la"></span>
-        </div>
-        <div class="city-row" data-city="kampala">
-          <span class="city-name">kampala</span>
-          <span class="city-time" id="city-time-kampala">--:--</span>
-          <span class="city-temp" id="city-temp-kampala">--°</span>
-          <span class="city-emoji" id="city-emoji-kampala"></span>
-        </div>
-      </div>
-    </section>
-
-    <section class="block" id="news-block">
-      <div class="block-label"><a href="https://news.ycombinator.com" target="_blank" rel="noopener noreferrer">hacker news</a></div>
-      <ul id="news-list">
-        <li class="loading">loading...</li>
-      </ul>
-    </section>
-
-    <section class="block" id="tldr-simon-block">
-      <div class="block-label"><a href="https://simonwillison.net" target="_blank" rel="noopener noreferrer">simon willison</a></div>
-      <ul id="tldr-simon-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-other-block">
-      <div class="block-label">other</div>
-      <ul id="tldr-other-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-tech-block">
-      <div class="block-label">tldr tech</div>
-      <ul id="tldr-tech-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-ai-block">
-      <div class="block-label">tldr ai</div>
-      <ul id="tldr-ai-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-design-block">
-      <div class="block-label">tldr design</div>
-      <ul id="tldr-design-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-product-block">
-      <div class="block-label">tldr product</div>
-      <ul id="tldr-product-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-infosec-block">
-      <div class="block-label">tldr infosec</div>
-      <ul id="tldr-infosec-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-fintech-block">
-      <div class="block-label">tldr fintech</div>
-      <ul id="tldr-fintech-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-devops-block">
-      <div class="block-label">tldr devops</div>
-      <ul id="tldr-devops-list"><li class="loading">loading...</li></ul>
-    </section>
-
-    <section class="block" id="tldr-marketing-block">
-      <div class="block-label">tldr marketing</div>
-      <ul id="tldr-marketing-list"><li class="loading">loading...</li></ul>
-    </section>
+    </div>
   </main>
   <script src="script.js?v=20"></script>
 </body>
